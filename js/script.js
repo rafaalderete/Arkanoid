@@ -38,6 +38,10 @@ $(document).ready(function() {
        }
    );
 
+   $('.small-menu').click(function() {
+     $('.big-menu').slideToggle('fast');
+   });
+
    Snap.select('.svg-facebook').hover(
      function() {
        Snap.select('#facebook-background').animate({'fill':'rgb(60, 60, 153)'}, 0.5);
@@ -48,11 +52,9 @@ $(document).ready(function() {
        Snap.select('#facebook').animate({'fill':'black'}, 0.5);
    });
 
-  $(window).bind('scroll', function () {
-    if ($(window).scrollTop() > 150) {
-        $('nav').addClass('fixed');
-    } else {
-        $('nav').removeClass('fixed');
+  $(window).resize(function(){
+    if($(window).width() > 600 && $('.big-menu').is(':hidden')) {
+        $('.big-menu').removeAttr('style');
     }
   });
 

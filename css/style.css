@@ -1,19 +1,43 @@
-@media all and (max-width: 768px) {
+@media all and (max-width: 600px) {
 
     .logo{
       width: 200px;
     }
 
     nav {
-      font-size: 20px;
+      font-size: 22px;
+    }
+
+    .small-menu {
+      display: inline-block;
+    }
+
+    .big-menu {
+      display: none;
+    }
+
+    .big-menu li {
+      margin: 0px;
+      margin-top: 5px;
+      width: 100%;
+    }
+
+    .big-menu li span {
+      padding: 5px 0px;
+      border-bottom: 1px solid blue;
     }
 
     .dropdown-content {
-      font-size: 12px;
+      margin-top: 5px;
+      font-size: 15px;
+      position: relative;
+
     }
 
       .dropdown-content li {
-        min-width: 100px;
+        width: 100%;
+        margin: 5px 0px;
+        padding: 0px;
       }
 
     .svg-facebook {
@@ -30,9 +54,13 @@
       font-size: 12px;
     }
 
+    footer li {
+      margin: 5px 5px;
+    }
+
 }
 
-@media all and (max-width: 1199px) and (min-width: 769px) {
+@media all and (max-width: 1199px) and (min-width: 600px) {
 
   .logo{
     width: 300px;
@@ -42,12 +70,30 @@
     font-size: 22px;
   }
 
+  .small-menu {
+    display: none;
+  }
+
+  .big-menu {
+    display: block;
+  }
+
   .dropdown-content {
     font-size: 15px;
+    position: absolute;
+    background-color: black;
   }
 
     .dropdown-content li {
       min-width: 120px;
+      padding: 0px;
+      padding-left: 5px;
+      margin: 0px 0px;
+      background-color: black;
+    }
+
+    .dropdown-content li a, .dropdown-content li span{
+      float: left;
     }
 
   .svg-facebook {
@@ -62,6 +108,10 @@
 
   footer {
     font-size: 15px;
+  }
+
+  footer li {
+    margin: 5px 7px;
   }
 
 }
@@ -76,12 +126,29 @@
     font-size: 28px;
   }
 
+  .small-menu {
+    display: none;
+  }
+
+  .big-menu {
+    display: block;
+  }
+
   .dropdown-content {
     font-size: 17px;
+    position: absolute;
+    background-color: black;
   }
 
     .dropdown-content li {
       min-width: 160px;
+      padding: 0px;
+      padding-left: 5px;
+      margin: 0px 0px;
+    }
+
+    .dropdown-content li a, .dropdown-content li span{
+      float: left;
     }
 
   .svg-facebook {
@@ -98,22 +165,28 @@
     font-size: 17px;
   }
 
+  footer li {
+    margin: 5px 10px;
+  }
+
 }
 
 @font-face {
-    font-family: arkanoid;
-    src: url("../fonts/iomanoid.ttf");
+	font-family: arkanoid;
+	src: url('../fonts/Iomanoid-Regular.eot');
+	src: url('../fonts/Iomanoid-Regular.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Iomanoid-Regular.woff2') format('woff2'),
+		url('../fonts/Iomanoid-Regular.woff') format('woff'),
+		url('../fonts/Iomanoid-Regular.ttf') format('truetype'),
+		url('../fonts/Iomanoid-Regular.svg#Iomanoid-Regular') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
 body {
   background: url("../img/background.jpg") fixed;
   margin: 0px 10%;
   color: white;
-}
-
-figure {
-  margin: 0px;
-  padding: 0px;
 }
 
 ul {
@@ -128,6 +201,11 @@ a:link, a:visited {
 header {
   width: 100%;
   text-align:center;
+}
+
+h1 {
+  margin: 0px;
+  padding: 0px;
 }
 
 footer {
@@ -147,21 +225,19 @@ footer {
   footer li {
     display: inline-block;
     float: left;
-    margin: 5px 10px;
   }
 
 nav {
   font-family: arkanoid;
   text-align: center;
   width: 100%;
+  display: block;
   z-index: 10;
-  box-sizing: border-box;
 }
 
   nav ul {
     padding: 0px;
     margin: 0px;
-    background: black;
   }
 
   nav li {
@@ -172,6 +248,10 @@ nav {
 
 section {
   margin: 40px 0px;
+}
+
+.title {
+  display: none;
 }
 
 .fixed {
@@ -200,20 +280,10 @@ section {
 
 .dropdown-content {
     display: none;
-    position: absolute;
     z-index: 10;
 }
 
-  .dropdown-content li {
-      padding: 0px;
-      margin: 0px 0px;
-      display: block;
-  }
-
   .dropdown-content li a, .dropdown-content li span{
-      padding: 5px 0px;
-      margin: 0px;
-      float: left;
       border-bottom: solid 1px red;
   }
 
@@ -264,8 +334,8 @@ section {
   background-color: white;
 }
 
-.game {
-  height: 1000px;
+section {
+  text-align: center;
 }
 
 path {
@@ -274,4 +344,8 @@ path {
 
 #twitter:hover {
   fill: rgb(0, 172, 237);
+}
+
+.game {
+  height: 500px;
 }
