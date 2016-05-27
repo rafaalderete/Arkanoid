@@ -248,6 +248,7 @@ nav {
 
 section {
   margin: 40px 0px;
+  text-align: center;
 }
 
 .title {
@@ -286,10 +287,6 @@ section {
   .dropdown-content li a, .dropdown-content li span{
       border-bottom: solid 1px red;
   }
-
-    .dropdown-content li:last-child a {
-      border-bottom:none;
-    }
 
 .carousel {
 		width: 480px;
@@ -334,10 +331,6 @@ section {
   background-color: white;
 }
 
-section {
-  text-align: center;
-}
-
 path {
   transition: fill 0.5s ease;
 }
@@ -346,6 +339,14 @@ path {
   fill: rgb(0, 172, 237);
 }
 
-.game {
-  height: 500px;
+.gamesingle {
+  height: 525px;
+}
+
+.gamelocalmulti {
+  display: inline-flex;
+}
+
+#container1 {
+  margin-right: 20px;
 }
