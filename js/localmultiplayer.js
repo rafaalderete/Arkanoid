@@ -574,6 +574,7 @@ function PickUp (x, y, active_type) {
   var B_TIME = 15000;
   var C_TIME = 8000;
   var D_TIME = 10000;
+  var I_TIME = 8000;
 
   this.x = x;
   this.y = y;
@@ -583,7 +584,7 @@ function PickUp (x, y, active_type) {
   this.touch_bottom = false;
   this.ended = false;
   this.active = false;
-  var all_types = ["A", "B", "C", "D", "E", "F", "G"];
+  var all_types = ["A", "B", "C", "D", "E", "F", "H", "I"];
   if (active_type == "NONE") {
     var rnd = Math.floor(Math.random() * all_types.length);
     this.type = all_types[rnd];
@@ -680,27 +681,49 @@ function PickUp (x, y, active_type) {
                 });
                 break;
 
-      case "G": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
+      case "H": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
                 letter_svg.attr({
-                  fill: '#CCCC00',
+                  fill: '#FFFF33',
                   "font-size": "14px",
                   "font-family": "Arial",
                   "font-weight": "bold"
                 });
                 pickup_svg.attr({
-                  fill: "#99004C"
+                  fill: "#EAD1B8"
                 });
                 break;
+
+     case "I": letter_svg = container.text(this.x + 18, this.y + 12, this.type);
+               letter_svg.attr({
+                 fill: '#FFFF33',
+                 "font-size": "14px",
+                 "font-family": "Arial",
+                 "font-weight": "bold"
+               });
+               pickup_svg.attr({
+                 fill: "#253339"
+               });
+               break;
+
     }
   }
 
-  function message(paddle, message, container) {
+  function message(paddle, message, container, isrival) {
     message_svg = container.text(paddle.x - 50, paddle.y, message);
-    message_svg.attr({
-      fill: 'white',
-      "font-size": "15px",
-      opacity: 0.7
-    });
+    if (!isrival){
+      message_svg.attr({
+        fill: '#FFFFFF',
+        "font-size": "15px",
+        opacity: 0.7
+      });
+    }
+    else {
+      message_svg.attr({
+        fill: '#FF0000',
+        "font-size": "15px",
+        opacity: 0.7
+      });
+    }
     message_svg.animate({y: paddle.y - 40}, 2000);
     timer_message = setTimeout(function(){
       message_svg.remove();
@@ -711,7 +734,7 @@ function PickUp (x, y, active_type) {
     message_svg.remove();
   }
 
-  this.effect = function(player) {
+  this.effect = function(player, rival) {
     switch (this.type) {
       case "A": if (!this.active) {
                   player.balls[1] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed);
@@ -719,14 +742,14 @@ function PickUp (x, y, active_type) {
                   player.balls[1].init(player.container);
                   player.balls[2].init(player.container);
                   this.active = true;
-                  message(player.paddle, "Multiball!", player.container);
+                  message(player.paddle, "Multiball!", player.container, false);
                 }
                 break;
 
       case "B": if (!this.active) {
                   this.active = true;
                   player.paddle.expand(player.viewbox);
-                  message(player.paddle, "Expand!", player.container);
+                  message(player.paddle, "Expand!", player.container, false);
                   timer_running = true;
                   timer = setTimeout(function(){
                     player.paddle.compress();
@@ -739,7 +762,7 @@ function PickUp (x, y, active_type) {
       case "C": if (!this.active) {
                   this.active = true;
                   player.paddle.cannonForm();
-                  message(player.paddle, "Cannon Form!", player.container);
+                  message(player.paddle, "Cannon Form!", player.container, false);
                   timer_running = true;
                   timer = setTimeout(function(){
                     player.paddle.endCannonForm();
@@ -752,7 +775,7 @@ function PickUp (x, y, active_type) {
       case "D": if (!this.active) {
                   this.active = true;
                   player.paddle.barrierForm(player.container);
-                  message(player.paddle, "Barrier!", player.container);
+                  message(player.paddle, "Barrier!", player.container, false);
                   timer_running = true;
                   timer = setTimeout(function(){
                     player.paddle.endBarrierForm(player.container);
@@ -765,7 +788,7 @@ function PickUp (x, y, active_type) {
       case "E": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "+ Ball Speed!", player.container);
+                  message(player.paddle, "+ Ball Speed!", player.container, false);
                   for (i = 0; i < player.balls.length; i++) {
                     player.balls[i].total_speed = player.balls[i].total_speed + 1;
                   }
@@ -775,25 +798,52 @@ function PickUp (x, y, active_type) {
       case "F": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "- Ball Speed!", player.container);
+                  message(player.paddle, "- Ball Speed!", player.container, false);
                   for (i = 0; i < player.balls.length; i++) {
                     player.balls[i].total_speed = player.balls[i].total_speed - 1;
                   }
                 }
                 break;
 
-      case "G": if (!this.active) {
+      case "H": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "+ Life!", player.container);
-                  player.lifes++;
-                  player.updateLifes();
+                  message(rival.paddle, "+ Ball Speed!", rival.container, true);
+                  for (i = 0; i < rival.balls.length; i++) {
+                    rival.balls[i].total_speed = rival.balls[i].total_speed + 1;
+                  }
+                }
+                break;
+
+      case "I": if (!this.active) {
+                  this.active = true;
+                  if (rival.pickup_active != null) {
+                    if (!rival.pickup_active.ended) {
+                      rival.pickup_active.endEffect(rival.balls, rival.paddle, rival);
+                    }
+                  }
+                  rival.pickup_active = null;
+                  if (rival.pickup != null) {
+                    if (rival.pickup_floating) {
+                      rival.pickup.remove();
+                      rival.pickup_floating = false;
+                    }
+                  }
+                  rival.pickup = null;
+                  rival.pickup_blocked = true;
+                  message(rival.paddle, "No Pickup!", rival.container, true);
+                  timer_running = true;
+                  timer = setTimeout(function(){
+                    rival.pickup_blocked = false;
+                    timer_running = false;
+                    this.ended = true;
+                  }, I_TIME);
                 }
                 break;
     }
   }
 
-  this.endEffect = function(balls, paddle) {
+  this.endEffect = function(balls, paddle, rival) {
     switch (this.type) {
       case "A": if (this.active && !this.ended) {
                   var count = 0;
@@ -838,6 +888,14 @@ function PickUp (x, y, active_type) {
                   timer_running = false;
                 }
                 paddle.endBarrierForm();
+                this.ended = true;
+                break;
+
+      case "I": if (timer_running) {
+                  clearInterval(timer);
+                  timer_running = false;
+                }
+                rival.pickup_blocked = false;
                 this.ended = true;
                 break;
     }
@@ -891,8 +949,9 @@ function Player (id, lifes, container) {
   this.pickup;
   this.pickup_active;
   this.amount_bricks;
+  this.pickup_floating = false;
+  this.pickup_blocked = false;
   var hit_paddle = false;
-  var pickup_floating = false;
   var lifes_svg;
 
   this.initLevel = function(level) {
@@ -1137,33 +1196,6 @@ function Player (id, lifes, container) {
     this.balls[0].init(this.container);
   }
 
-  this.resetPosition = function() {
-    this.paddle.remove();
-    this.paddle = new Paddle(this.viewbox);
-    this.paddle.init(this.container);
-    if (this.pickup_active != null) {
-      this.pickup_active.endEffect(this.balls, this.paddle);
-      this.pickup_active.removeMessage();
-    }
-    this.pickup_active = null;
-    if (pickup_floating) {
-      this.pickup.remove();
-      this.pickup = null;
-      pickup_floating = false;
-    }
-    this.balls[0].remove();
-    this.balls = [new Ball(this.paddle.x + this.paddle.width/2, this.paddle.y, BALL_SPEED)];
-    this.balls[0].init(this.container);
-  }
-
-  this.resetBricks = function() {
-    for(i = 0; i < this.bricks.length; i++) {
-      if (this.bricks[i].type == 0) {
-        this.bricks[i].remove();
-      }
-    }
-  }
-
   this.checkLoseLife = function() {
     var flag = true;
     for (i = 0; i < this.balls.length; i++) {
@@ -1190,7 +1222,7 @@ function Player (id, lifes, container) {
 
   this.addPickUp = function(x, y) {
     var rnd;
-    if (!pickup_floating) {
+    if (!this.pickup_floating  && !this.pickup_blocked) {
       rnd = Math.random();
       if (rnd < PICKUP_PROB) {
         if (this.pickup_active != null) {
@@ -1212,7 +1244,7 @@ function Player (id, lifes, container) {
           this.pickup = new PickUp(x, y, 'NONE');
         }
         this.pickup.init(this.container);
-        pickup_floating = true;
+        this.pickup_floating = true;
       }
     }
   }
@@ -1331,8 +1363,8 @@ function Player (id, lifes, container) {
     }
   }
 
-  this.collisionPickUp = function() {
-    if (pickup_floating) {
+  this.collisionPickUp = function(rival) {
+    if (this.pickup_floating && !this.pickup_blocked) {
       var pickup_y = this.pickup.y;
       var pickup_y2 = this.pickup.y + this.pickup.height;
       var pickup_x = this.pickup.x;
@@ -1340,9 +1372,9 @@ function Player (id, lifes, container) {
       if ( (pickup_y2 > this.paddle.y) && (pickup_y < (this.paddle.y + this.paddle.height)) ) {
         if ( ((pickup_x > this.paddle.x) && (pickup_x < this.paddle.x + this.paddle.width)) || ((pickup_x2 < this.paddle.x + this.paddle.width) && (pickup_x2 > this.paddle.x)) ) {
           this.pickup.touch_bottom = true;
-          pickup_floating = false;
+          this.pickup_floating = false;
           if (this.pickup_active != null) {
-            this.pickup_active.endEffect(this.balls, this.paddle);
+            this.pickup_active.endEffect(this.balls, this.paddle, rival);
           }
           this.pickup_active = this.pickup;
         }
@@ -1381,24 +1413,24 @@ function Player (id, lifes, container) {
     }
   }
 
-  this.update = function() {
+  this.update = function(rival) {
     for(i = 0; i < this.balls.length; i++) {
       this.balls[i].update(this.paddle, this.viewbox);
     }
     this.paddle.update(this.id, this.container, this.viewbox);
     if (this.pickup != null){
       if (this.pickup.touch_bottom) {
-        pickup_floating = false;
+        this.pickup_floating = false;
       }
       this.pickup.update(this.viewbox);
     }
     this.collisionBall();
-    this.collisionPickUp();
+    this.collisionPickUp(rival);
     this.collisionBullets();
     if (this.pickup_active != null){
-      this.pickup_active.effect(this);
+      this.pickup_active.effect(this, rival);
       if (this.pickup_active.type == "A") {
-        this.pickup_active.endEffect(this.balls, this.paddle);
+        this.pickup_active.endEffect(this.balls, this.paddle, rival);
       }
     }
   }
@@ -1444,8 +1476,8 @@ function Arkanoid() {
   }
 
   function update() {
-    players[0].update();
-    players[1].update();
+    players[0].update(players[1]);
+    players[1].update(players[0]);
   }
 
   function draw() {
