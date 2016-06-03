@@ -1,11 +1,16 @@
+<?php
+  session_start();
+?>
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arkanoid | Top Scores Singleplayer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="google-signin-client_id" content="332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com">
+  <title>Arkanoid | Home</title>
   <link href="css/style.css" rel="stylesheet" />
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
   <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
   <script type="text/javascript" src="js/snap.svg-min.js"></script>
   <script type="text/javascript" src="js/script.js"></script>
@@ -15,8 +20,22 @@
   <header>
     <h1>
       <span class="title">Arkanoid</span>
-      <a href="index.html"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
+      <a href="index.php"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
     </h1>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <?php
+      if (isset($_SESSION['name']) && $_SESSION['name']) {
+        echo("<script>
+                $('.g-signin2').css('display', 'none');
+              </script>");
+        echo('<div class ="dropdown logged">
+                <span class="dropdownbutton button">'.$_SESSION['name'].'</span>
+                <ul class="dropdown-content">
+                  <li><a class="button" onclick=signOut();>Log out</a></li>
+                </ul>
+              </div>');
+      }
+    ?>
   </header>
 
   <nav>
@@ -25,28 +44,51 @@
       <li>☰</li>
     </ul>
     <ul class="big-menu">
-      <li><a class="button" href="index.html">Home</a></li>
+      <li><span class="dropdownbutton button current">Home</span></li>
       <li class ="dropdown">
         <span class="dropdownbutton button">Play</span>
         <ul class="dropdown-content">
-          <li><a class="button" href="play_singleplayer.html">Single Player</a></li>
-          <li><a class="button" href="play_localmultiplayer.html">Local Multiplayer</a></li>
-          <li><a class="button" href="play_onlinemultiplayer.html">Online Multiplayer</a></li>
+          <li><a class="button" href="play_singleplayer.php">Single Player</a></li>
+          <li><a class="button" href="play_localmultiplayer.php">Local Multiplayer</a></li>
+          <li><a class="button" href="play_onlinemultiplayer.php">Online Multiplayer</a></li>
         </ul>
       </li>
       <li class ="dropdown">
-        <span class="dropdownbutton button current">Top-Scores</span>
+        <span class="dropdownbutton button">Top-Scores</span>
         <ul class="dropdown-content">
-          <li><span class="button current">Single Player</span></li>
-          <li><a class="button" href="topscores_multiplayer.html">Multiplayer</a></li>
+          <li><a class="button" href="topscores_singleplayer.php">Single Player</a></li>
+          <li><a class="button" href="topscores_multiplayer.php">Multiplayer</a></li>
         </ul>
       </li>
-      <li><a class="button" href="contact.html">Contact</a></li>
+      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 
   <section>
+    <div class="carousel">
+      <ul class="slides">
+        <li><img src="img/fish.jpg" ></li>
+        <li><img src="img/elephant.jpg"></li>
+        <li><img src="img/giraffe.jpg"></li>
+        <li><img src="img/penguins.jpg"></li>
+      </ul>
+      <ul class="dots">
+        <li id="dot1" position="1" class="dot active"></li>
+        <li id="dot2" position="2" class="dot"></li>
+        <li id="dot3" position="3" class="dot"></li>
+        <li id="dot4" position="4" class="dot"></li>
+      </ul>
+    </div>
   </section>
+
+  <section>
+
+  </section>
+
+  <aside>
+    <a class="twitter-timeline"  href="https://twitter.com/Arkanoid_Online" data-widget-id="737510510845788160" width="300"
+    height="200">Tweets by @Arkanoid_Online.</a>
+  </aside>
 
   <footer>
       <ul>
@@ -68,7 +110,7 @@
           </a>
         </li>
         <li>
-          <a href="">
+          <a href="https://twitter.com/Arkanoid_Online">
             <svg class="svg-twitter" width="30px" height="30px" viewBox="0 0 30 30.0009">
               <path id="twitter" fill="white" d="M30 3.55135c-1.10288,0.60326 -2.28991,1.00986 -3.53452,1.19323
               1.2703,-0.937223 2.2465,-2.4219 2.70625,-4.19004 -1.18969,0.868127 -2.50694,1.49796
@@ -93,5 +135,4 @@
     </p>
   </footer>
 </body>
-
 </html>

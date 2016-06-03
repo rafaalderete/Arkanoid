@@ -37,11 +37,7 @@ function Bullet (x, y) {
 
   this.init = function (container) {
     bullet_svg = container.rect(this.x, this.y, this.width, this.height, 10, 10);
-    bullet_svg.attr({
-      fill: '#FFFFFF',
-      stroke: "#FF0000",
-      strokeWidth: 0.5
-    });
+    bullet_svg.addClass('bullet');
   }
 
   this.update = function (viewbox) {
@@ -72,132 +68,47 @@ function Bullet (x, y) {
 
 }
 
-function Paddle(viewbox) {
+function Barrier (y) {
 
-  var PADDLE_WIDTH = 60;
-	var PADDLE_HEIGHT = 13;
-  var PADDLE_BORDER_WIDTH = 10;
-  var PADDLE_BORDER_SVG_WIDTH = 40;
-  var BOX_CANNON_WIDTH = 15;
-  var BOX_CANNON_HEIGHT= 5;
-  var CANNON_WIDTH = 5;
-  var CANNON_HEIGHT = 10;
-  var BOX_BARRIER_WIDTH = 10;
-  var BOX_BARRIER_HEIGHT = 10;
-  var PADDLE_SPEED = 7;
-  var PADDLE_INCREMENT = 50;
-  var INCREMENT_TIME = 300;
-  var DELAY_SHOT = 600;
   var BARRIER_INTERVAL_TIME = 50;
 
-  this.center_width = PADDLE_WIDTH;
-	this.width = this.center_width + PADDLE_BORDER_WIDTH * 2;
-  this.height = PADDLE_HEIGHT;
-  this.x = (viewbox.width - this.width) / 2;
-  this.y = viewbox.height - PADDLE_HEIGHT - 20;
-  this.bullets = [];
-  this.barrier = false;
-  var cannon_form = false;
-  var left_border_svg;
-  var center_paddle_svg;
-  var right_border_svg;
-  var left_box_cannon_svg;
-  var left_cannon_svg;
-  var right_box_cannon_svg;
-  var right_cannon_svg;
-  var left_box_barrier_svg;
-  var right_box_barrier_svg;
+  this.active = false;
+  this.y = y;
   var barrier1_svg;
   var barrier2_svg;
   var timer_barrier1;
   var timer_barrier2;
-  var can_shoot = true;
 
-  this.init = function (container) {
-    left_border_svg = container.rect(this.x, this.y, PADDLE_BORDER_SVG_WIDTH, PADDLE_HEIGHT, 10, 10);
-    right_border_svg = container.rect(this.x + PADDLE_BORDER_SVG_WIDTH, this.y, PADDLE_BORDER_SVG_WIDTH, PADDLE_HEIGHT, 10 ,10);
-    left_cannon_svg = container.rect(this.x + PADDLE_BORDER_WIDTH + 5, this.y, CANNON_WIDTH, CANNON_HEIGHT);
-    left_box_cannon_svg = container.rect(this.x + PADDLE_BORDER_WIDTH, this.y, BOX_CANNON_WIDTH, BOX_CANNON_HEIGHT);
-    right_cannon_svg = container.rect(this.x + PADDLE_WIDTH + PADDLE_BORDER_WIDTH - 10, this.y, CANNON_WIDTH, CANNON_HEIGHT);
-    right_box_cannon_svg = container.rect(this.x + PADDLE_WIDTH + PADDLE_BORDER_WIDTH - 15, this.y, BOX_CANNON_WIDTH, BOX_CANNON_HEIGHT);
-    left_box_barrier_svg = container.rect(this.x + 20, this.y, BOX_BARRIER_WIDTH, BOX_BARRIER_HEIGHT);
-    right_box_barrier_svg = container.rect(this.x + 50, this.y, BOX_BARRIER_WIDTH, BOX_BARRIER_HEIGHT);
-    center_paddle_svg = container.rect(this.x + PADDLE_BORDER_WIDTH, this.y, this.center_width, PADDLE_HEIGHT);
-    left_border_svg.attr({
-      fill: '#FF0000',
-      stroke: '#990000',
-      strokeWidth: 1
-    });
-    right_border_svg.attr({
-      fill: '#FF0000',
-      stroke: '#990000',
-      strokeWidth: 1
-    });
-    left_cannon_svg.attr({
-      fill: '#696969'
-    });
-    right_cannon_svg.attr({
-      fill: '#696969'
-    });
-    left_box_cannon_svg.attr({
-      fill: '#A9A9A9'
-    });
-    right_box_cannon_svg.attr({
-      fill: '#A9A9A9'
-    });
-    left_box_barrier_svg.attr({
-      fill: '#696969'
-    });
-    right_box_barrier_svg.attr({
-      fill: '#696969'
-    });
-    center_paddle_svg.attr({
-      fill: '#A9A9A9',
-      stroke: '#696969',
-      strokeWidth: 1
-    });
+  this.initBarrier1 = function(container) {
+    barrier1_svg = container.polyline(0, this.y, 30, this.y + 10,
+                                      60, this.y, 90, this.y + 10,
+                                      120, this.y, 150, this.y + 10,
+                                      180, this.y, 210, this.y + 10,
+                                      240, this.y, 270, this.y + 10,
+                                      300, this.y, 330, this.y + 10,
+                                      360, this.y, 390, this.y + 10,
+                                      420, this.y, 450, this.y + 10,
+                                      480, this.y, 510, this.y + 10,
+                                      520, this.y + 5);
+    barrier1_svg.addClass('barrier');
   }
 
-  this.initBarrier1 = function (container) {
-    barrier1_svg = container.polyline(0, this.y + this.height, 30, this.y + this.height + 10,
-                                      60, this.y + this.height, 90, this.y + this.height + 10,
-                                      120, this.y + this.height, 150, this.y + this.height + 10,
-                                      180, this.y + this.height, 210, this.y + this.height + 10,
-                                      240, this.y + this.height, 270, this.y + this.height + 10,
-                                      300, this.y + this.height, 330, this.y + this.height + 10,
-                                      360, this.y + this.height, 390, this.y + this.height + 10,
-                                      420, this.y + this.height, 450, this.y + this.height + 10,
-                                      480, this.y + this.height, 510, this.y + this.height + 10,
-                                      520, this.y + this.height + 5);
-    barrier1_svg.attr({
-      fill: "none",
-      stroke: "#00BFFF",
-      strokeWidth: 2
-    });
+  this.initBarrier2 = function(container) {
+    barrier2_svg = container.polyline(0, this.y + 15, 30, this.y + 5,
+                                      60, this.y + 15, 90, this.y + 5,
+                                      120, this.y + 15, 150, this.y + 5,
+                                      180, this.y + 15, 210, this.y + 5,
+                                      240, this.y + 15, 270, this.y + 5,
+                                      300, this.y + 15, 330, this.y + 5,
+                                      360, this.y + 15, 390, this.y + 5,
+                                      420, this.y + 15, 450, this.y + 5,
+                                      480, this.y + 15, 510, this.y + 5,
+                                      520, this.y + 10);
+    barrier2_svg.addClass('barrier');
   }
 
-  this.initBarrier2 = function (container) {
-    barrier2_svg = container.polyline(0, this.y + this.height + 15, 30, this.y + this.height +5,
-                                      60, this.y + this.height + 15, 90, this.y + this.height + 5,
-                                      120, this.y + this.height +15, 150, this.y + this.height + 5,
-                                      180, this.y + this.height + 15, 210, this.y + this.height +5,
-                                      240, this.y + this.height + 15, 270, this.y + this.height +5,
-                                      300, this.y + this.height + 15, 330, this.y + this.height +5,
-                                      360, this.y + this.height + 15, 390, this.y + this.height +5,
-                                      420, this.y + this.height + 15, 450, this.y + this.height +5,
-                                      480, this.y + this.height + 15, 510, this.y + this.height +5,
-                                      520, this.y + this.height + 10);
-    barrier2_svg.attr({
-      fill: "none",
-      stroke: "#00BFFF",
-      strokeWidth: 2
-    });
-  }
-
-  this.barrierForm = function(container) {
-    this.barrier = true;
-    left_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT + 18}, INCREMENT_TIME);
-    right_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT + 18}, INCREMENT_TIME);
+  this.barrierForm = function (container) {
+    this.active = true;
     this.initBarrier1(container);
     var self = this;
     timer_barrier1 = setInterval(function() {
@@ -220,11 +131,8 @@ function Paddle(viewbox) {
     }, BARRIER_INTERVAL_TIME);;
   }
 
-
   this.endBarrierForm = function () {
-    this.barrier = false;
-    left_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT - 10}, INCREMENT_TIME);
-    right_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT - 10}, INCREMENT_TIME);
+    this.active = false;
     clearInterval(timer_barrier1);
     clearInterval(timer_barrier2);
     if (barrier1_svg != null) {
@@ -235,6 +143,82 @@ function Paddle(viewbox) {
       barrier2_svg.remove();
       barrier2_svg = null;
     }
+  }
+
+}
+
+function Paddle(viewbox) {
+
+  var PADDLE_WIDTH = 60;
+	var PADDLE_HEIGHT = 13;
+  var PADDLE_BORDER_WIDTH = 10;
+  var PADDLE_BORDER_SVG_WIDTH = 40;
+  var BOX_CANNON_WIDTH = 15;
+  var BOX_CANNON_HEIGHT= 5;
+  var CANNON_WIDTH = 5;
+  var CANNON_HEIGHT = 10;
+  var BOX_BARRIER_WIDTH = 10;
+  var BOX_BARRIER_HEIGHT = 10;
+  var PADDLE_SPEED = 7;
+  var PADDLE_INCREMENT = 50;
+  var INCREMENT_TIME = 300;
+  var DELAY_SHOT = 600;
+
+  this.center_width = PADDLE_WIDTH;
+	this.width = this.center_width + PADDLE_BORDER_WIDTH * 2;
+  this.height = PADDLE_HEIGHT;
+  this.x = (viewbox.width - this.width) / 2;
+  this.y = viewbox.height - PADDLE_HEIGHT - 20;
+  this.bullets = [];
+  this.barrier = new Barrier(this.y + this.height);
+  var cannon_form = false;
+  var left_border_svg;
+  var center_paddle_svg;
+  var right_border_svg;
+  var left_box_cannon_svg;
+  var left_cannon_svg;
+  var right_box_cannon_svg;
+  var right_cannon_svg;
+  var left_box_barrier_svg;
+  var right_box_barrier_svg;
+  var can_shoot = true;
+
+  this.init = function (container) {
+    left_border_svg = container.rect(this.x, this.y, PADDLE_BORDER_SVG_WIDTH, PADDLE_HEIGHT, 10, 10);
+    right_border_svg = container.rect(this.x + PADDLE_BORDER_SVG_WIDTH, this.y, PADDLE_BORDER_SVG_WIDTH, PADDLE_HEIGHT, 10 ,10);
+    left_cannon_svg = container.rect(this.x + PADDLE_BORDER_WIDTH + 5, this.y, CANNON_WIDTH, CANNON_HEIGHT);
+    left_box_cannon_svg = container.rect(this.x + PADDLE_BORDER_WIDTH, this.y, BOX_CANNON_WIDTH, BOX_CANNON_HEIGHT);
+    right_cannon_svg = container.rect(this.x + PADDLE_WIDTH + PADDLE_BORDER_WIDTH - 10, this.y, CANNON_WIDTH, CANNON_HEIGHT);
+    right_box_cannon_svg = container.rect(this.x + PADDLE_WIDTH + PADDLE_BORDER_WIDTH - 15, this.y, BOX_CANNON_WIDTH, BOX_CANNON_HEIGHT);
+    left_box_barrier_svg = container.rect(this.x + 20, this.y, BOX_BARRIER_WIDTH, BOX_BARRIER_HEIGHT);
+    right_box_barrier_svg = container.rect(this.x + 50, this.y, BOX_BARRIER_WIDTH, BOX_BARRIER_HEIGHT);
+    center_paddle_svg = container.rect(this.x + PADDLE_BORDER_WIDTH, this.y, this.center_width, PADDLE_HEIGHT);
+    left_border_svg.addClass('paddleborder');
+    right_border_svg.addClass('paddleborder');
+    left_cannon_svg.addClass('cannon2');
+    right_cannon_svg.addClass('cannon2');
+    left_box_cannon_svg.addClass('cannon1');
+    right_box_cannon_svg.addClass('cannon1');
+    left_box_barrier_svg.addClass('cannon2');
+    right_box_barrier_svg.addClass('cannon2');
+    center_paddle_svg.addClass('centerpaddle');
+  }
+
+  this.barrierForm = function(container) {
+    left_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT + 18}, INCREMENT_TIME);
+    right_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT + 18}, INCREMENT_TIME);
+    this.barrier.barrierForm(container);
+  }
+
+
+  this.endBarrierForm = function () {
+    left_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT - 10}, INCREMENT_TIME);
+    right_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT - 10}, INCREMENT_TIME);
+    this.barrier.endBarrierForm();
+  }
+
+  this.isBarrierActive = function() {
+    return this.barrier.active;
   }
 
   this.cannonForm = function () {
@@ -308,16 +292,6 @@ function Paddle(viewbox) {
     right_cannon_svg.remove();
     left_box_barrier_svg.remove();
     right_box_barrier_svg.remove();
-    if (this.barrier) {
-      clearInterval(timer_barrier1);
-      clearInterval(timer_barrier2);
-    }
-    if (barrier1_svg != null) {
-      barrier1_svg.remove();
-    }
-    if (barrier2_svg != null) {
-      barrier2_svg.remove();
-    }
     for (i = 0; i < this.bullets.length; i++) {
       this.bullets[i].remove();
     }
@@ -400,11 +374,7 @@ function Ball(cx, cy, speed) {
 
   this.init = function(container) {
     ball_svg = container.circle(this.cx, this.cy, this.radius);
-    ball_svg.attr({
-      fill: '#FFFFFF',
-      stroke: "#FF0000",
-      strokeWidth: 1.5
-    });
+    ball_svg.addClass('ball');
     var self = this;
     speed_timer = setInterval(function() {
       self.incrementSpeed();
@@ -444,6 +414,7 @@ function Brick(x, y, type) {
 
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
+  var BLINK_TIME = 100;
 
 	this.x = x;
 	this.y = y;
@@ -452,13 +423,16 @@ function Brick(x, y, type) {
   this.type = type;
   if (type == 1) {
     this.hits = 1;
+    this.score = 100;
   }
   else {
     if (type == 2) {
       this.hits = 2;
+      this.score = 300;
     }
     else {
       this.hits = 0;
+      this.score = 0;
     }
   }
   var damaged = false;
@@ -466,35 +440,23 @@ function Brick(x, y, type) {
   var damage_svg;
 
   this.init = function(container) {
-    var inner_colours = ['#FF0000', '#00FF00', '#0000FF', '#FF8000', '#FF00FF', '#00FFFF'];
-    var border_colours = ['#990000', '#009900', '#000099', '#994c00', '#990099', '#009999'];
+    var inner_colours = ['innerbricktype1_1', 'innerbricktype1_2', 'innerbricktype1_3', 'innerbricktype1_4', 'innerbricktype1_5', 'innerbricktype1_6'];
+    var border_colours = ['borderbricktype1_1', 'borderbricktype1_2', 'borderbricktype1_3', 'borderbricktype1_4', 'borderbricktype1_5', 'borderbricktype1_6'];
     var border_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
     var inner_svg = container.rect(this.x + 3, this.y + 3, BRICK_WIDTH - 6, BRICK_HEIGHT - 6);
     if (this.type == 1){
       var rnd = Math.floor((Math.random() * inner_colours.length));
-      border_svg.attr({
-        fill: border_colours[rnd]
-      });
-      inner_svg.attr({
-        fill: inner_colours[rnd]
-      });
+      border_svg.addClass(border_colours[rnd]);
+      inner_svg.addClass(inner_colours[rnd]);
     }
     else {
       if (this.type == 2) {
-        border_svg.attr({
-          fill: "#404040"
-        });
-        inner_svg.attr({
-          fill: "#808080"
-        });
+        border_svg.addClass('borderbricktype2');
+        inner_svg.addClass('innerbricktype2');
       }
       else {
-        border_svg.attr({
-          fill: "#DAA520"
-        });
-        inner_svg.attr({
-          fill: "#FFD700"
-        });
+        border_svg.addClass('borderbricktype3');
+        inner_svg.addClass('innerbricktype3');
       }
     }
     brick_svg = container.group(border_svg, inner_svg);
@@ -511,24 +473,16 @@ function Brick(x, y, type) {
           damaged = true;
           damage_svg = container.polyline(this.x, this.y, this.x+10, this.y+10, this.x+15, this.y+5,
             this.x+20, this.y+10, this.x+25, this.y+2, this.x+38, this.y+11);
-          damage_svg.attr({
-            fill: "none",
-            stroke: "#000000",
-            strokeWidth: 2,
-            opacity: 0.6
-          });
+          damage_svg.addClass('damagebrick');
         }
       }
       else {
         if (this.type == 0) {
           var blink_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
-          blink_svg.attr({
-            fill: "#FFFFFF",
-            opacity: 0.8
-          });
+          blink_svg.addClass('blinkbrick');
           setTimeout(function(){
             blink_svg.remove();
-          }, 100);
+          }, BLINK_TIME);
         }
       }
     }
@@ -554,6 +508,7 @@ function PickUp (x, y, active_type) {
   var PICKUP_WIDTH = 40;
   var PICKUP_HEIGHT = 15;
   var PICKUP_SPEED = 2;
+  var MESSAGE_TIME = 2000;
   var B_TIME = 15000;
   var C_TIME = 8000;
   var D_TIME = 10000;
@@ -581,6 +536,12 @@ function PickUp (x, y, active_type) {
     var rnd = Math.floor(Math.random() * types.length);
     this.type = types[rnd];
   }
+  if (this.type == "G") {
+    this.score = 500;
+  }
+  else {
+    this.score = 200;
+  }
   var pickup_svg;
   var letter_svg;
   var message_svg;
@@ -590,104 +551,44 @@ function PickUp (x, y, active_type) {
 
   this.init = function (container) {
     pickup_svg = container.rect(this.x, this.y, PICKUP_WIDTH, PICKUP_HEIGHT, 10, 10);
+    letter_svg = container.text(this.x + 14, this.y + 12, this.type);
+    letter_svg.addClass('pickupletter');
     switch (this.type) {
-      case "A": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#CCCC00',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#990000"
-                });
+      case "A": pickup_svg.addClass('pickup_a');
                 break;
 
-      case "B": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#FFFF33',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#009900"
-                });
+      case "B": pickup_svg.addClass('pickup_b');
                 break;
 
-      case "C": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#CCCC00',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#000099"
-                });
+      case "C": pickup_svg.addClass('pickup_c');
                 break;
 
-      case "D": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#CCCC00',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#994c00"
-                });
+      case "D": pickup_svg.addClass('pickup_d');
                 break;
 
-      case "E": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#FFFF33',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#990099"
-                });
+      case "E": pickup_svg.addClass('pickup_e');
                 break;
 
-      case "F": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#FFFF33',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#009999"
-                });
+      case "F": pickup_svg.addClass('pickup_f');
                 break;
 
-      case "G": letter_svg = container.text(this.x + 14, this.y + 12, this.type);
-                letter_svg.attr({
-                  fill: '#CCCC00',
-                  "font-size": "14px",
-                  "font-family": "Arial",
-                  "font-weight": "bold"
-                });
-                pickup_svg.attr({
-                  fill: "#99004C"
-                });
+      case "G": pickup_svg.addClass('pickup_g');
                 break;
     }
   }
 
-  function message(paddle, message, container) {
-    message_svg = container.text(paddle.x - 50, paddle.y, message);
-    message_svg.attr({
-      fill: 'white',
-      "font-size": "15px",
-      opacity: 0.7
-    });
+  function message(paddle, message, container, viewbox) {
+    if (paddle.x < (viewbox.width / 2)) {
+      message_svg = container.text(paddle.x + 100, paddle.y, message);
+    }
+    else {
+      message_svg = container.text(paddle.x - 50, paddle.y, message);
+    }
+    message_svg.addClass('pickupmessage');
     message_svg.animate({y: paddle.y - 40}, 2000);
     timer_message = setTimeout(function(){
       message_svg.remove();
-    }, 2000);
+    }, MESSAGE_TIME);
   }
 
   this.removeMessage = function () {
@@ -702,14 +603,14 @@ function PickUp (x, y, active_type) {
                   player.balls[1].init(player.container);
                   player.balls[2].init(player.container);
                   this.active = true;
-                  message(player.paddle, "Multiball!", player.container);
+                  message(player.paddle, "Multiball!", player.container, player.viewbox);
                 }
                 break;
 
       case "B": if (!this.active) {
                   this.active = true;
                   player.paddle.expand(player.viewbox);
-                  message(player.paddle, "Expand!", player.container);
+                  message(player.paddle, "Expand!", player.container, player.viewbox);
                   timer_running = true;
                   timer = setTimeout(function(){
                     player.paddle.compress();
@@ -722,7 +623,7 @@ function PickUp (x, y, active_type) {
       case "C": if (!this.active) {
                   this.active = true;
                   player.paddle.cannonForm();
-                  message(player.paddle, "Cannon Form!", player.container);
+                  message(player.paddle, "Cannon Form!", player.container, player.viewbox);
                   timer_running = true;
                   timer = setTimeout(function(){
                     player.paddle.endCannonForm();
@@ -735,7 +636,7 @@ function PickUp (x, y, active_type) {
       case "D": if (!this.active) {
                   this.active = true;
                   player.paddle.barrierForm(player.container);
-                  message(player.paddle, "Barrier!", player.container);
+                  message(player.paddle, "Barrier!", player.container, player.viewbox);
                   timer_running = true;
                   timer = setTimeout(function(){
                     player.paddle.endBarrierForm(player.container);
@@ -748,7 +649,7 @@ function PickUp (x, y, active_type) {
       case "E": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "+ Ball Speed!", player.container);
+                  message(player.paddle, "+ Ball Speed!", player.container, player.viewbox);
                   for (i = 0; i < player.balls.length; i++) {
                     player.balls[i].total_speed = player.balls[i].total_speed + 1;
                   }
@@ -758,7 +659,7 @@ function PickUp (x, y, active_type) {
       case "F": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "- Ball Speed!", player.container);
+                  message(player.paddle, "- Ball Speed!", player.container, player.viewbox);
                   for (i = 0; i < player.balls.length; i++) {
                     player.balls[i].total_speed = player.balls[i].total_speed - 1;
                   }
@@ -768,7 +669,7 @@ function PickUp (x, y, active_type) {
       case "G": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "+ Life!", player.container);
+                  message(player.paddle, "+ Life!", player.container, player.viewbox);
                   player.lifes++;
                   player.updateLifes();
                 }
@@ -873,21 +774,20 @@ function Player (lifes, container) {
   this.pickup;
   this.pickup_active;
   this.amount_bricks;
+  this.score = 0;
   var hit_paddle = false;
   var pickup_floating = false;
   var lifes_svg;
+  var score_svg;
 
   this.initLevel = function(level) {
-    var brick_x;
+    var brick_x = 0;
     var brick_y;
-    var column;
-    var row;
+    var column = 0;
+    var row = 0;
     this.amount_bricks = 0;
     switch (level) {
-      case 1: column = 0;
-              row = 0;
-              brick_x = 0;
-              brick_y = 50;
+      case 1: brick_y = 50;
               for (i = 0; i < BRICKS_LVL1; i++) {
                 if (row == 0) {
                   this.bricks[i] = new Brick(brick_x, brick_y, 2);
@@ -909,10 +809,7 @@ function Player (lifes, container) {
               }
               break;
 
-      case 2: column = 0;
-              row = 0;
-              var column_limit = 1;
-              brick_x = 0;
+      case 2: var column_limit = 1;
               brick_y = 15;
               for (i = 0; i < BRICKS_LVL2; i++) {
                 if (row == 12){
@@ -941,15 +838,12 @@ function Player (lifes, container) {
               }
               break;
 
-      case 3: column = 0;
-              row = 0;
-              brick_x = 0;
-              brick_y = BRICK_PADDING_Y;
+      case 3: brick_y = BRICK_PADDING_Y;
               var first = true;
               var count = 0;
               for (i = 0; i < BRICKS_LVL3; i++) {
                 if ( ((row % 2) != 0) && (row != 7) ) {
-                  if ( (column == 0) || (column == 1) || (column == 2) ) {
+                  if ( (column >= 0) && (column < 3) ) {
                     if (first && (count < 3)) {
                       this.bricks[i] = new Brick(brick_x, brick_y, 1);
                       this.amount_bricks++;
@@ -960,7 +854,7 @@ function Player (lifes, container) {
                     }
                   }
                   else {
-                    if ( (column == 10) || (column == 11) || (column == 12) ) {
+                    if ( (column > 9) && (column < 13) ) {
                       if (!first && (count < 3)) {
                         this.bricks[i] = new Brick(brick_x, brick_y, 1);
                         this.amount_bricks++;
@@ -1001,10 +895,7 @@ function Player (lifes, container) {
               }
               break;
 
-      case 4: column = 0;
-              row = 0;
-              brick_x = 0;
-              brick_y = BRICK_PADDING_Y;
+      case 4: brick_y = BRICK_PADDING_Y;
               j = 0;
               for (i = 0; i < BRICKS_LVL4; i++) {
                 if ( (row == 0) || (row == 10) ) {
@@ -1072,10 +963,7 @@ function Player (lifes, container) {
               }
               break;
 
-      case 5: column = 0;
-              row = 0;
-              brick_x = 0;
-              brick_y = BRICK_PADDING_Y;
+      case 5: brick_y = BRICK_PADDING_Y;
               for (i = 0; i < BRICKS_LVL5; i++) {
                 if (row == 5){
                   if ( (column > 2) && (column < 10)){
@@ -1114,22 +1002,27 @@ function Player (lifes, container) {
     }
   }
 
+  this.updateScore = function () {
+    if (score_svg != null) {
+      score_svg.remove();
+    }
+    score_svg = this.container.text(3, this.viewbox.height - 5, "Score: " + this.score);
+    score_svg.addClass('lifescore')
+  }
+
   this.updateLifes = function () {
     if (lifes_svg != null) {
       lifes_svg.remove();
     }
-    lifes_svg = this.container.text(3, this.viewbox.height - 5, "Lifes: " + this.lifes);
-    lifes_svg.attr({
-      fill: 'white',
-      "font-size": "13px",
-      opacity: 0.5
-    });
+    lifes_svg = this.container.text(this.viewbox.width - 50, this.viewbox.height - 5, "Lifes: " + this.lifes);
+    lifes_svg.addClass('lifescore')
   }
 
   this.init = function () {
     this.paddle.init(this.container);
     this.balls[0].init(this.container);
     this.updateLifes();
+    this.updateScore();
   }
 
   this.resetPosition = function() {
@@ -1221,7 +1114,7 @@ function Player (lifes, container) {
       var ball_x2 = this.balls[j].cx + this.balls[j].radius + this.balls[j].speed_x;
       var ball_x_relative = this.balls[j].cx - this.paddle.x;
       //Colision con la barrera del Paddle.
-      if(this.paddle.barrier) {
+      if(this.paddle.isBarrierActive()) {
         if (ball_y2 > this.paddle.y + this.paddle.height) {
           this.balls[j].speed_y = -this.balls[j].speed_y;
         }
@@ -1321,6 +1214,8 @@ function Player (lifes, container) {
         }
         if (remove_brick) {
           this.amount_bricks--;
+          this.score = this.score + this.bricks[i].score;
+          this.updateScore();
           this.addPickUp(this.bricks[i].x, this.bricks[i].y);
         }
       }
@@ -1340,6 +1235,8 @@ function Player (lifes, container) {
           if (this.pickup_active != null) {
             this.pickup_active.endEffect(this.balls, this.paddle);
           }
+          this.score = this.score + this.pickup.score;
+          this.updateScore();
           this.pickup_active = this.pickup;
         }
       }
@@ -1370,6 +1267,8 @@ function Player (lifes, container) {
           }
           if (remove_brick) {
             this.amount_bricks--;
+            this.score = this.score + this.bricks[i].score;
+            this.updateScore();
             this.addPickUp(this.bricks[j].x, this.bricks[j].y);
           }
         }
@@ -1419,7 +1318,7 @@ function Arkanoid() {
 
   var LIMIT_LEVEL = 5;
   var LEVEL_TIMER = 2000;
-  var GAMEOVER_HEIGHT = 100;
+  var GAMEOVER_HEIGHT = 120;
 
   var container = Snap("#container");
   var viewbox = container.attr('viewBox');
@@ -1431,19 +1330,15 @@ function Arkanoid() {
   var controls_svg;
   var background_level_svg;
   var level_svg;
+  var submit_score_svg;
+  var yes_svg;
+  var no_svg;
 
   function levelTransition() {
     background_level_svg = container.rect(0, 0, container.attr('width'), container.attr('height'));
-    background_level_svg.attr({
-      fill: "#000000",
-      stroke: "#FFFFFF",
-      strokeWidth: 1
-    });
+    background_level_svg.addClass('backgroundlevel');
     level_svg = container.text(viewbox.width/2-35, viewbox.height/2, "Level " + level);
-    level_svg.attr({
-      fill: 'white',
-      "font-size": "20px"
-    });
+    level_svg.addClass('levelmessage');
     setTimeout(function(){
       level_started = true;
       background_level_svg.remove();
@@ -1483,28 +1378,37 @@ function Arkanoid() {
 
   this.checkGameOver = function() {
     if (player.lifes == 0) {
-      var lose1_svg = container.rect(0, viewbox.height/2 -55, container.attr('width'), GAMEOVER_HEIGHT);
-      var lose2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2, "You Lose!");
-      lose1_svg.attr({
-        fill: "#990000"
+      var lose1_svg = container.rect(0, viewbox.height/2 -75, container.attr('width'), GAMEOVER_HEIGHT);
+      var lose2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 - 50, "You Lose!");
+      var score_svg = container.text(viewbox.width/2 - 40, viewbox.height/2 - 25, "Score: " + player.score);
+      submit_score_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 + 10, "Submit Score?");
+      yes_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 + 35, "Yes");
+      no_svg = container.text(viewbox.width/2 + 15, viewbox.height/2 + 35, "No");
+      lose1_svg.addClass('lose')
+      lose2_svg.addClass('levelmessage');
+      score_svg.addClass('levelmessage');
+      submit_score_svg.addClass('levelmessage');
+      yes_svg.addClass('levelmessage');
+      no_svg.addClass('levelmessage');
+      yes_svg.attr({
+        id: 'yes'
       });
-      lose2_svg.attr({
-        fill: 'white',
-        "font-size": "20px"
+      no_svg.attr({
+        id: 'no'
       });
       return true;
     }
     else {
       if (level > LIMIT_LEVEL) {
-        var win1_svg = container.rect(0, viewbox.height/2 -55, container.attr('width'), GAMEOVER_HEIGHT);
-        var win2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2, "You Win!");
-        win1_svg.attr({
-          fill: "#009900"
-        });
-        win2_svg.attr({
-          fill: 'white',
-          "font-size": "20px"
-        });
+        var win1_svg = container.rect(0, viewbox.height/2 -75, container.attr('width'), GAMEOVER_HEIGHT);
+        var win2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 - 50, "You Win!");
+        var score_svg = container.text(viewbox.width/2 - 40, viewbox.height/2 - 25, "Score: " + player.score);
+        submit_score_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 + 10, "Submit Score?");
+        yes_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 + 35, "Yes");
+        no_svg = container.text(viewbox.width/2 + 15, viewbox.height/2 + 35, "No");
+        win1_svg.addClass('win');
+        win2_svg.addClass('levelmessage');
+        score_svg.addClass('levelmessage');
         return true;
       }
       else {
@@ -1513,46 +1417,42 @@ function Arkanoid() {
     }
   }
 
+  this.checkSubmit = function(confirm) {
+    submit_score_svg.remove();
+    yes_svg.remove();
+    no_svg.remove();
+    if (confirm == "Y") {
+      var submitted_svg = container.text(viewbox.width/2 - 60, viewbox.height/2 + 10, "Score Submitted");
+      var ty_playing_svg = container.text(viewbox.width/2 - 90, viewbox.height/2 + 30, "Thank you for Playing!");
+      submitted_svg.addClass('levelmessage');
+    }
+    else {
+      var ty_playing_svg = container.text(viewbox.width/2 - 90, viewbox.height/2 + 10, "Thank you for Playing!");
+    }
+    ty_playing_svg.addClass('levelmessage');
+  }
+
+  this.getPlayerScore = function() {
+    return player.score;
+  }
+
   this.init = function() {
     var background = container.rect(0, 0, container.attr('width'), container.attr('height'));
-    background.attr({
-      fill: "#000000",
-      stroke: "#FFFFFF",
-      strokeWidth: 1
-    });
+    background.addClass('backgroundlevel');
     player.init();
     player.initLevel(level);
     background_start_svg = container.rect(0, 0, container.attr('width'), container.attr('height'));
-    background_start_svg.attr({
-      fill: "#000000",
-      stroke: "#FFFFFF",
-      strokeWidth: 1
-    });
+    background_start_svg.addClass('backgroundlevel');
     var controls1_svg = container.text(viewbox.width/2 - 40, viewbox.height/2 - 50, "Controls:");
     var controls2_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 - 25, "Z: Move Left");
     var controls3_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 - 5, "X: Move Right");
     var controls4_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 + 15, "S: Shoot");
     var controls5_svg = container.text(viewbox.width/2 - 90, viewbox.height/2 + 100, "Press \"Space\" to Start.");
-    controls1_svg.attr({
-      fill: 'white',
-      "font-size": "20px"
-    });
-    controls2_svg.attr({
-      fill: 'white',
-      "font-size": "20px"
-    });
-    controls3_svg.attr({
-      fill: 'white',
-      "font-size": "20px"
-    });
-    controls4_svg.attr({
-      fill: 'white',
-      "font-size": "20px"
-    });
-    controls5_svg.attr({
-      fill: 'white',
-      "font-size": "20px"
-    });
+    controls1_svg.addClass('levelmessage');
+    controls2_svg.addClass('levelmessage');
+    controls3_svg.addClass('levelmessage');
+    controls4_svg.addClass('levelmessage');
+    controls5_svg.addClass('levelmessage');
     controls_svg = container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
   }
 
@@ -1580,6 +1480,8 @@ function Arkanoid() {
 //Main.
 $(document).ready(function() {
 
+var elementExists = document.getElementById("container");
+if (elementExists != null) {
   window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
   window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
 
@@ -1592,4 +1494,20 @@ $(document).ready(function() {
     }
   }, 1000/60);
 
+  $('svg').on("click", '#yes', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'submit_score.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        game.checkSubmit("Y");
+      }
+    };
+    xhr.send("score=" + game.getPlayerScore());
+  });
+
+  $('svg').on("click", '#no', function() {
+    game.checkSubmit("N");
+  });
+}
 });

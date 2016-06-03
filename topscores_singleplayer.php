@@ -1,11 +1,26 @@
+<?php
+  session_start();
+
+  $connection = mysqli_connect("localhost","root","","test") or die();
+
+  $sql = "select * from scores_single inner join users
+          on scores_single.id_user=users.id_user
+          order by score desc limit 15";
+  $records = mysqli_query($connection, $sql) or die(mysqli_error($connection));
+
+  mysqli_close($connection);
+
+?>
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arkanoid | Top Scores Multiplayer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="google-signin-client_id" content="332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com">
+  <title>Arkanoid | Top Scores Singleplayer</title>
   <link href="css/style.css" rel="stylesheet" />
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
   <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
   <script type="text/javascript" src="js/snap.svg-min.js"></script>
   <script type="text/javascript" src="js/script.js"></script>
@@ -15,8 +30,22 @@
   <header>
     <h1>
       <span class="title">Arkanoid</span>
-      <a href="index.html"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
+      <a href="index.php"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
     </h1>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <?php
+      if (isset($_SESSION['name']) && $_SESSION['name']) {
+        echo("<script>
+                $('.g-signin2').css('display', 'none');
+              </script>");
+        echo('<div class ="dropdown logged">
+                <span class="dropdownbutton button">'.$_SESSION['name'].'</span>
+                <ul class="dropdown-content">
+                  <li><a class="button" onclick=signOut();>Log out</a></li>
+                </ul>
+              </div>');
+      }
+    ?>
   </header>
 
   <nav>
@@ -25,27 +54,43 @@
       <li>☰</li>
     </ul>
     <ul class="big-menu">
-      <li><a class="button" href="index.html">Home</a></li>
+      <li><a class="dropdownbutton button" href="index.php">Home</a></li>
       <li class ="dropdown">
         <span class="dropdownbutton button">Play</span>
         <ul class="dropdown-content">
-          <li><a class="button" href="play_singleplayer.html">Single Player</a></li>
-          <li><a class="button" href="play_localmultiplayer.html">Local Multiplayer</a></li>
-          <li><a class="button" href="play_onlinemultiplayer.html">Online Multiplayer</a></li>
+          <li><a class="button" href="play_singleplayer.php">Single Player</a></li>
+          <li><a class="button" href="play_localmultiplayer.php">Local Multiplayer</a></li>
+          <li><a class="button" href="play_onlinemultiplayer.php">Online Multiplayer</a></li>
         </ul>
       </li>
       <li class ="dropdown">
         <span class="dropdownbutton button current">Top-Scores</span>
         <ul class="dropdown-content">
-          <li><a class="button" href="topscores_singleplayer.html">Single Player</a></li>
-          <li><span class="button current">Multiplayer</span></li>
+          <li><span class="button current">Single Player</span></li>
+          <li><a class="button" href="topscores_multiplayer.php">Multiplayer</a></li>
         </ul>
       </li>
-      <li><a class="button" href="contact.html">Contact</a></li>
+      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 
   <section>
+    <div class="row">
+      <div class="col-4 headergrid">N°</div>
+      <div class="col-4 headergrid">Name</div>
+      <div class="col-4 headergrid">Score</div>
+    </div>
+      <?php
+        $i = 1;
+        while ($rec = mysqli_fetch_array($records)){
+          echo('<div class="row">
+                  <div class="col-4 innergrid">'.$i.'</div>
+                  <div class="col-4 innergrid">'.$rec['name'].'</div>
+                  <div class="col-4 innergrid">'.$rec['score'].'</div>
+                </div>');
+          $i++;
+        }
+      ?>
   </section>
 
   <footer>

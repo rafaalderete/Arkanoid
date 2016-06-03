@@ -1,0 +1,204 @@
+.paddleborder {
+  fill: #FF0000;
+  stroke: #990000;
+}
+
+.centerpaddle {
+  fill: #A9A9A9;
+  stroke: #696969;
+  stroke-width: 1;
+}
+
+.cannon1 {
+  fill: #A9A9A9;
+}
+
+.cannon2 {
+  fill: #696969;
+}
+
+.barrier {
+  fill: none;
+  stroke: #00BFFF;
+  stroke-width: 2;
+}
+
+.bullet {
+  fill: #FFFFFF;
+  stroke: #FF0000,;
+  stroke-width: 0.5;
+}
+
+.ball {
+  fill: #FFFFFF;
+  stroke: #FF0000;
+  stroke-width: 1.5;
+}
+
+.innerbricktype1_1 {
+  fill: #FF0000;
+}
+
+.innerbricktype1_2 {
+  fill: #00FF00;
+}
+
+.innerbricktype1_3 {
+  fill: #0000FF;
+}
+
+.innerbricktype1_4 {
+  fill: #FF8000;
+}
+
+.innerbricktype1_5 {
+  fill: #FF00FF;
+}
+
+.innerbricktype1_6 {
+  fill: #00FFFF;
+}
+
+.borderbricktype1_1 {
+  fill: #990000;
+}
+
+.borderbricktype1_2 {
+  fill: #009900;
+}
+
+.borderbricktype1_3 {
+  fill: #000099;
+}
+
+.borderbricktype1_4 {
+  fill: #994C00;
+}
+
+.borderbricktype1_5 {
+  fill: #990099;
+}
+
+.borderbricktype1_6 {
+  fill: #009999;
+}
+
+.innerbricktype2 {
+  fill: #808080;
+}
+
+.borderbricktype2 {
+  fill: #404040;
+}
+
+.innerbricktype3 {
+  fill: #FFD700;
+}
+
+.borderbricktype3 {
+  fill: #DAA520;
+}
+
+.damagebrick {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 2;
+  opacity: 0.6;
+}
+
+.blinkbrick {
+  fill: #FFFFFF;
+  opacity: 0.8;
+}
+
+.pickup_a {
+  fill: #990000;
+}
+
+.pickup_b {
+  fill: #009900;
+}
+
+.pickup_c {
+  fill: #000099;
+}
+
+.pickup_d {
+  fill: #994C00;
+}
+
+.pickup_e {
+  fill: #990099;
+}
+
+.pickup_f {
+  fill: #009999;
+}
+
+.pickup_g {
+  fill: #99004C;
+}
+
+.pickup_h {
+  fill: #EAD1B8;
+}
+
+.pickup_i {
+  fill: #253339;
+}
+
+.pickup_j {
+  fill: #98FB98;
+}
+
+.pickupletter {
+  fill: #CCCC00;
+  font-size: 14px;
+  font-family: Arial;
+  font-weight: bold;
+}
+
+.pickupmessage {
+  fill: #FFFFFF;
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.pickupmessagerival {
+  fill: #FF0000;
+  font-size: 15px;
+  opacity: 0.7;
+}
+
+.lifescore {
+  fill: #FFFFFF;
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.backgroundlevel {
+  fill: #000000;
+  stroke: #FFFFFF;
+  stroke-width: 1;
+}
+
+.levelmessage {
+  fill: #FFFFFF;
+  font-size: 20px;
+}
+
+.lose {
+  fill: #990000;
+}
+
+.win {
+  fill: #009900;
+}
+
+#yes, #no {
+  cursor: pointer;
+}
+
+#yes:hover, #no:hover {
+  text-decoration: underline;
+}

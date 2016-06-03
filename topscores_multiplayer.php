@@ -1,11 +1,16 @@
+<?php
+  session_start();
+?>
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arkanoid | Contact</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="google-signin-client_id" content="332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com">
+  <title>Arkanoid | Top Scores Multiplayer</title>
   <link href="css/style.css" rel="stylesheet" />
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
   <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
   <script type="text/javascript" src="js/snap.svg-min.js"></script>
   <script type="text/javascript" src="js/script.js"></script>
@@ -15,8 +20,22 @@
   <header>
     <h1>
       <span class="title">Arkanoid</span>
-      <a href="index.html"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
+      <a href="index.php"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
     </h1>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <?php
+      if (isset($_SESSION['name']) && $_SESSION['name']) {
+        echo("<script>
+                $('.g-signin2').css('display', 'none');
+              </script>");
+        echo('<div class ="dropdown logged">
+                <span class="dropdownbutton button">'.$_SESSION['name'].'</span>
+                <ul class="dropdown-content">
+                  <li><a class="button" onclick=signOut();>Log out</a></li>
+                </ul>
+              </div>');
+      }
+    ?>
   </header>
 
   <nav>
@@ -25,32 +44,31 @@
       <li>☰</li>
     </ul>
     <ul class="big-menu">
-      <li><a class="button" href="index.html">Home</a></li>
+      <li><a class="dropdownbutton button" href="index.php">Home</a></li>
       <li class ="dropdown">
         <span class="dropdownbutton button">Play</span>
         <ul class="dropdown-content">
-          <li><a class="button" href="play_singleplayer.html">Single Player</a></li>
-          <li><a class="button" href="play_localmultiplayer.html">Local Multiplayer</a></li>
-          <li><a class="button" href="play_onlinemultiplayer.html">Online Multiplayer</a></li>
+          <li><a class="button" href="play_singleplayer.php">Single Player</a></li>
+          <li><a class="button" href="play_localmultiplayer.php">Local Multiplayer</a></li>
+          <li><a class="button" href="play_onlinemultiplayer.php">Online Multiplayer</a></li>
         </ul>
       </li>
       <li class ="dropdown">
-        <span class="dropdownbutton button" href="#">Top-Scores</span>
+        <span class="dropdownbutton button current">Top-Scores</span>
         <ul class="dropdown-content">
-          <li><a class="button" href="topscores_singleplayer.html">Single Player</a></li>
-          <li><a class="button" href="topscores_multiplayer.html">Multiplayer</a></li>
+          <li><a class="button" href="topscores_singleplayer.php">Single Player</a></li>
+          <li><span class="button current">Multiplayer</span></li>
         </ul>
       </li>
-      <li><span class="button current">Contact</span></li>
+      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 
   <section>
-
   </section>
 
   <footer>
-      <ul class>
+      <ul>
         <li>
           <a href="">
             <svg class="svg-facebook" width="30px" height="30px" viewBox="0 0 0.494538 0.494538">

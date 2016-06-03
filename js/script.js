@@ -1,3 +1,31 @@
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'login.php', true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+        location.reload();
+    }
+  };
+  xhr.send("email=" + profile.getEmail() + "&name=" + profile.getName());
+}
+
+function signOut() {
+  var auth2 = gapi.auth2.getAuthInstance();
+  auth2.signOut().then(function () {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'logout.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+          location.reload();
+      }
+    };
+    xhr.send();
+  });
+}
+
 $(document).ready(function() {
 
   var SLIDEWIDTH = 480;
@@ -57,5 +85,14 @@ $(document).ready(function() {
         $('.big-menu').removeAttr('style');
     }
   });
+
+  !function(d,s,id){
+    var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+    if(!d.getElementById(id)){js=d.createElement(s);
+      js.id=id;
+      js.src=p+"://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js,fjs);
+    }
+  }(document,"script","twitter-wjs");
 
 });
