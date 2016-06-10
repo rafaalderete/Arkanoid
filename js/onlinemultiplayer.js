@@ -37,7 +37,7 @@ function Bullet (x, y) {
 
   this.init = function (container) {
     bullet_svg = container.rect(this.x, this.y, this.width, this.height, 10, 10);
-    bullet_svg.addClass('bullet');
+    bullet_svgaddClass('bullet');
   };
 
   this.update = function (viewbox) {
@@ -112,7 +112,7 @@ function Barrier (y) {
     this.initBarrier1(container);
     var self = this;
     timer_barrier1 = setInterval(function() {
-      if (barrier1_svg == null) {
+      if (barrier1_svg === null) {
         self.initBarrier1(container);
       }
       else {
@@ -121,7 +121,7 @@ function Barrier (y) {
       }
     }, BARRIER_INTERVAL_TIME);
     timer_barrier2 = setInterval(function() {
-      if (barrier2_svg == null) {
+      if (barrier2_svg === null) {
         self.initBarrier2(container);
       }
       else {
@@ -135,11 +135,11 @@ function Barrier (y) {
     this.active = false;
     clearInterval(timer_barrier1);
     clearInterval(timer_barrier2);
-    if (barrier1_svg != null) {
+    if (barrier1_svg !== null) {
       barrier1_svg.remove();
       barrier1_svg = null;
     }
-    if (barrier2_svg != null) {
+    if (barrier2_svg !== null) {
       barrier2_svg.remove();
       barrier2_svg = null;
     }
@@ -171,6 +171,7 @@ function Paddle(viewbox) {
   this.y = viewbox.height - PADDLE_HEIGHT - 20;
   this.bullets = [];
   this.barrier = new Barrier(this.y + this.height);
+  this.can_move = true;
   var cannon_form = false;
   var left_border_svg;
   var center_paddle_svg;
@@ -297,15 +298,19 @@ function Paddle(viewbox) {
     }
   };
 
-  this.update = function (container, viewbox) {
-    if (Key.isDown(Key.LEFT)){
-      this.moveLeft();
-    }
-    if (Key.isDown(Key.RIGHT)){
-      this.moveRight(viewbox);
-    }
-    if (Key.isDown(Key.SHOOT)) {
-      this.shoot(container);
+  this.update = function (id, container, viewbox) {
+    if (id === 0) {
+      if (this.can_move) {
+        if (Key.isDown(Key.LEFT)){
+          this.moveLeft();
+        }
+        if (Key.isDown(Key.RIGHT)){
+          this.moveRight(viewbox);
+        }
+        if (Key.isDown(Key.SHOOT)) {
+          this.shoot(container);
+        }
+      }
     }
     for (i = 0; i < this.bullets.length; i++) {
       this.bullets[i].update(viewbox);
@@ -423,16 +428,13 @@ function Brick(x, y, type) {
   this.type = type;
   if (type == 1) {
     this.hits = 1;
-    this.score = 100;
   }
   else {
     if (type == 2) {
       this.hits = 2;
-      this.score = 300;
     }
     else {
       this.hits = 0;
-      this.score = 0;
     }
   }
   var damaged = false;
@@ -512,6 +514,8 @@ function PickUp (x, y, active_type) {
   var B_TIME = 15000;
   var C_TIME = 8000;
   var D_TIME = 10000;
+  var I_TIME = 8000;
+  var J_TIME = 700;
 
   this.x = x;
   this.y = y;
@@ -521,8 +525,8 @@ function PickUp (x, y, active_type) {
   this.touch_bottom = false;
   this.ended = false;
   this.active = false;
-  var all_types = ["A", "B", "C", "D", "E", "F", "G"];
   var rnd;
+  var all_types = ["A", "B", "C", "D", "E", "F", "H", "I", "J"];
   if (active_type == "NONE") {
     rnd = Math.floor(Math.random() * all_types.length);
     this.type = all_types[rnd];
@@ -537,12 +541,6 @@ function PickUp (x, y, active_type) {
     rnd = Math.floor(Math.random() * types.length);
     this.type = types[rnd];
   }
-  if (this.type == "G") {
-    this.score = 500;
-  }
-  else {
-    this.score = 200;
-  }
   var pickup_svg;
   var letter_svg;
   var message_svg;
@@ -552,7 +550,13 @@ function PickUp (x, y, active_type) {
 
   this.init = function (container) {
     pickup_svg = container.rect(this.x, this.y, PICKUP_WIDTH, PICKUP_HEIGHT, 10, 10);
-    letter_svg = container.text(this.x + 14, this.y + 12, this.type);
+    if (this.type != "I") {
+        letter_svg = container.text(this.x + 14, this.y + 12, this.type);
+    }
+    else {
+        letter_svg = container.text(this.x + 18, this.y + 12, this.type);
+    }
+
     letter_svg.addClass('pickupletter');
     switch (this.type) {
       case "A": pickup_svg.addClass('pickup_a');
@@ -573,19 +577,30 @@ function PickUp (x, y, active_type) {
       case "F": pickup_svg.addClass('pickup_f');
                 break;
 
-      case "G": pickup_svg.addClass('pickup_g');
+      case "H": pickup_svg.addClass('pickup_h');
+                break;
+
+      case "I": pickup_svg.addClass('pickup_i');
+                break;
+
+      case "J": pickup_svg.addClass('pickup_j');
                 break;
     }
   };
 
-  function message(paddle, message, container, viewbox) {
+  function message(paddle, message, container, viewbox, isrival = false) {
     if (paddle.x < (viewbox.width / 2)) {
       message_svg = container.text(paddle.x + 100, paddle.y, message);
     }
     else {
       message_svg = container.text(paddle.x - 50, paddle.y, message);
     }
-    message_svg.addClass('pickupmessage');
+    if (!isrival){
+      message_svg.addClass('pickupmessage');
+    }
+    else {
+      message_svg.addClass('pickupmessagerival');
+    }
     message_svg.animate({y: paddle.y - 40}, 2000);
     timer_message = setTimeout(function(){
       message_svg.remove();
@@ -596,7 +611,7 @@ function PickUp (x, y, active_type) {
     message_svg.remove();
   };
 
-  this.effect = function(player) {
+  this.effect = function(player, rival) {
     switch (this.type) {
       case "A": if (!this.active) {
                   player.balls[1] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed);
@@ -667,18 +682,58 @@ function PickUp (x, y, active_type) {
                 }
                 break;
 
-      case "G": if (!this.active) {
+      case "H": if (!this.active) {
                   this.active = true;
                   this.ended = true;
-                  message(player.paddle, "+ Life!", player.container, player.viewbox);
-                  player.lifes++;
-                  player.updateLifes();
+                  message(rival.paddle, "+ Ball Speed!", rival.container, rival.viewbox, true);
+                  for (i = 0; i < rival.balls.length; i++) {
+                    rival.balls[i].total_speed = rival.balls[i].total_speed + 1;
+                  }
+                }
+                break;
+
+      case "I": if (!this.active) {
+                  this.active = true;
+                  if (rival.pickup_active !== null) {
+                    if (!rival.pickup_active.ended) {
+                      rival.pickup_active.endEffect(rival.balls, rival.paddle, rival);
+                    }
+                  }
+                  rival.pickup_active = null;
+                  if (rival.pickup !== null) {
+                    if (rival.pickup_floating) {
+                      rival.pickup.remove();
+                      rival.pickup_floating = false;
+                    }
+                  }
+                  rival.pickup = null;
+                  rival.pickup_blocked = true;
+                  message(rival.paddle, "No Pickup!", rival.container, rival.viewbox, true);
+                  timer_running = true;
+                  timer = setTimeout(function(){
+                    rival.pickup_blocked = false;
+                    timer_running = false;
+                    this.ended = true;
+                  }, I_TIME);
+                }
+                break;
+
+      case "J": if (!this.active) {
+                  this.active = true;
+                  rival.paddle.can_move = false;
+                  message(rival.paddle, "Can't move!", rival.container, rival.viewbox, true);
+                  timer_running = true;
+                  timer = setTimeout(function(){
+                    rival.paddle.can_move = true;
+                    timer_running = false;
+                    this.ended = true;
+                  }, J_TIME);
                 }
                 break;
     }
   };
 
-  this.endEffect = function(balls, paddle) {
+  this.endEffect = function(balls, paddle, rival) {
     switch (this.type) {
       case "A": if (this.active && !this.ended) {
                   var count = 0;
@@ -725,6 +780,22 @@ function PickUp (x, y, active_type) {
                 paddle.endBarrierForm();
                 this.ended = true;
                 break;
+
+      case "I": if (timer_running) {
+                  clearInterval(timer);
+                  timer_running = false;
+                }
+                rival.pickup_blocked = false;
+                this.ended = true;
+                break;
+
+      case "J": if (timer_running) {
+                  clearInterval(timer);
+                  timer_running = false;
+                }
+                rival.paddle.can_move = true;
+                this.ended = true;
+                break;
     }
   };
 
@@ -752,7 +823,7 @@ function PickUp (x, y, active_type) {
 
 }
 
-function Player (lifes, container) {
+function Player (id, lifes, container) {
 
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
@@ -769,17 +840,17 @@ function Player (lifes, container) {
   this.container = container;
   this.viewbox = this.container.attr('viewBox');
   this.lifes = lifes;
+  this.id = id;
   this.paddle = new Paddle(this.viewbox);
   this.balls = [new Ball(this.paddle.x + this.paddle.width/2, this.paddle.y, BALL_SPEED)];
   this.bricks = [];
   this.pickup;
   this.pickup_active;
   this.amount_bricks;
-  this.score = 0;
+  this.pickup_floating = false;
+  this.pickup_blocked = false;
   var hit_paddle = false;
-  var pickup_floating = false;
   var lifes_svg;
-  var score_svg;
 
   this.initLevel = function(level) {
     var brick_x = 0;
@@ -1003,55 +1074,9 @@ function Player (lifes, container) {
     }
   };
 
-  this.updateScore = function () {
-    if (score_svg != null) {
-      score_svg.remove();
-    }
-    score_svg = this.container.text(3, this.viewbox.height - 5, "Score: " + this.score);
-    score_svg.addClass('lifescore');
-  };
-
-  this.updateLifes = function () {
-    if (lifes_svg != null) {
-      lifes_svg.remove();
-    }
-    lifes_svg = this.container.text(this.viewbox.width - 50, this.viewbox.height - 5, "Lifes: " + this.lifes);
-    lifes_svg.addClass('lifescore');
-  };
-
   this.init = function () {
     this.paddle.init(this.container);
     this.balls[0].init(this.container);
-    this.updateLifes();
-    this.updateScore();
-  };
-
-  this.resetPosition = function() {
-    this.paddle.remove();
-    this.paddle = new Paddle(this.viewbox);
-    this.paddle.init(this.container);
-    if (this.pickup_active != null) {
-      this.pickup_active.endEffect(this.balls, this.paddle);
-      this.pickup_active.removeMessage();
-    }
-    this.pickup_active = null;
-    if (pickup_floating) {
-      this.pickup.remove();
-      this.pickup = null;
-      pickup_floating = false;
-    }
-    this.balls[0].remove();
-    this.balls = [new Ball(this.paddle.x + this.paddle.width/2, this.paddle.y, BALL_SPEED)];
-    this.balls[0].init(this.container);
-    this.updateLifes();
-  };
-
-  this.resetBricks = function() {
-    for(i = 0; i < this.bricks.length; i++) {
-      if (this.bricks[i].type === 0) {
-        this.bricks[i].remove();
-      }
-    }
   };
 
   this.checkLoseLife = function() {
@@ -1080,7 +1105,7 @@ function Player (lifes, container) {
 
   this.addPickUp = function(x, y) {
     var rnd;
-    if (!pickup_floating) {
+    if (!this.pickup_floating  && !this.pickup_blocked) {
       rnd = Math.random();
       if (rnd < PICKUP_PROB) {
         if (this.pickup_active != null) {
@@ -1102,7 +1127,7 @@ function Player (lifes, container) {
           this.pickup = new PickUp(x, y, 'NONE');
         }
         this.pickup.init(this.container);
-        pickup_floating = true;
+        this.pickup_floating = true;
       }
     }
   };
@@ -1215,16 +1240,14 @@ function Player (lifes, container) {
         }
         if (remove_brick) {
           this.amount_bricks--;
-          this.score = this.score + this.bricks[i].score;
-          this.updateScore();
           this.addPickUp(this.bricks[i].x, this.bricks[i].y);
         }
       }
     }
   };
 
-  this.collisionPickUp = function() {
-    if (pickup_floating) {
+  this.collisionPickUp = function(rival) {
+    if (this.pickup_floating && !this.pickup_blocked) {
       var pickup_y = this.pickup.y;
       var pickup_y2 = this.pickup.y + this.pickup.height;
       var pickup_x = this.pickup.x;
@@ -1232,12 +1255,10 @@ function Player (lifes, container) {
       if ( (pickup_y2 > this.paddle.y) && (pickup_y < (this.paddle.y + this.paddle.height)) ) {
         if ( ((pickup_x > this.paddle.x) && (pickup_x < this.paddle.x + this.paddle.width)) || ((pickup_x2 < this.paddle.x + this.paddle.width) && (pickup_x2 > this.paddle.x)) ) {
           this.pickup.touch_bottom = true;
-          pickup_floating = false;
-          if (this.pickup_active != null) {
-            this.pickup_active.endEffect(this.balls, this.paddle);
+          this.pickup_floating = false;
+          if (this.pickup_active !== null) {
+            this.pickup_active.endEffect(this.balls, this.paddle, rival);
           }
-          this.score = this.score + this.pickup.score;
-          this.updateScore();
           this.pickup_active = this.pickup;
         }
       }
@@ -1268,8 +1289,6 @@ function Player (lifes, container) {
           }
           if (remove_brick) {
             this.amount_bricks--;
-            this.score = this.score + this.bricks[i].score;
-            this.updateScore();
             this.addPickUp(this.bricks[j].x, this.bricks[j].y);
           }
         }
@@ -1277,24 +1296,24 @@ function Player (lifes, container) {
     }
   };
 
-  this.update = function() {
+  this.update = function(rival) {
     for(i = 0; i < this.balls.length; i++) {
-      this.balls[i].update(this.paddle, this.viewbox);
+     this.balls[i].update(this.paddle, this.viewbox);
     }
-    this.paddle.update(this.container, this.viewbox);
+    this.paddle.update(this.id, this.container, this.viewbox);
     if (this.pickup != null){
       if (this.pickup.touch_bottom) {
-        pickup_floating = false;
+        this.pickup_floating = false;
       }
       this.pickup.update(this.viewbox);
     }
     this.collisionBall();
-    this.collisionPickUp();
+    this.collisionPickUp(rival);
     this.collisionBullets();
     if (this.pickup_active != null){
-      this.pickup_active.effect(this);
+      this.pickup_active.effect(this, rival);
       if (this.pickup_active.type == "A") {
-        this.pickup_active.endEffect(this.balls, this.paddle);
+        this.pickup_active.endEffect(this.balls, this.paddle, rival);
       }
     }
   };
@@ -1317,99 +1336,82 @@ function Player (lifes, container) {
 //Clase Principal del juego.
 function Arkanoid() {
 
-  var LIMIT_LEVEL = 5;
-  var LEVEL_TIMER = 2000;
-  var GAMEOVER_HEIGHT = 120;
+  var LEVELS = 5;
+  var GAMEOVER_HEIGHT = 100;
+  var SEARCHING = 0;
+  var MATCHING = 1;
+  var MATCHED = 2;
 
-  var container = Snap("#container");
-  var viewbox = container.attr('viewBox');
-  var player = new Player (3, container);
-  var level = 1;
-  var game_started = false;
-  var level_started = false;
-  var background_start_svg;
-  var controls_svg;
-  var background_level_svg;
-  var level_svg;
-  var submit_score_svg;
-  var yes_svg;
-  var no_svg;
+  this.game_matched = false;
+  this.game_status = SEARCHING;
+  this.id_game;
+  this.player_data;
+  this.rival_data;
+  this.level;
+  var players = [new Player (0, 1, Snap("#container1")), new Player (1, 1, Snap("#container2"))];
+  var game_started1 = false;
+  var game_started2 = false;
+  var background_start_player1_svg;
+  var controls_player1_svg;
+  var background_start_player2_svg;
+  var ready1_svg;
+  var ready2_svg;
 
-  function levelTransition() {
-    background_level_svg = container.rect(0, 0, container.attr('width'), container.attr('height'));
-    background_level_svg.addClass('backgroundlevel');
-    level_svg = container.text(viewbox.width/2-35, viewbox.height/2, "Level " + level);
-    level_svg.addClass('levelmessage');
-    setTimeout(function(){
-      level_started = true;
-      background_level_svg.remove();
-      level_svg.remove();
-    }, LEVEL_TIMER);
-  }
-
-  function checkPlayerLoseLife() {
-    if (player.checkLoseLife()) {
-      player.lifes--;
-      if (player.lifes > 0) {
-        player.resetPosition();
-      }
+  function checkPlayersLoseLife() {
+    if (players[0].checkLoseLife()) {
+      players[0].lifes--;
     }
-  }
-
-  function checkPlayerWinLevel() {
-    if (player.checkWinLevel()) {
-      level++;
-      if (level <= LIMIT_LEVEL) {
-        level_started = false;
-        player.resetPosition();
-        player.resetBricks();
-        player.initLevel(level);
-        levelTransition();
-      }
+    if (players[1].checkLoseLife()) {
+      players[1].lifes--;
     }
   }
 
   function update() {
-    player.update();
+    players[0].update(players[1]);
+    players[1].update(players[0]);
   }
 
   function draw() {
-    player.draw();
+    players[0].draw();
+    players[1].draw();
+  }
+
+  function winMessage(container, viewbox) {
+    var win1_svg = container.rect(0, viewbox.height/2 -55, container.attr('width'), GAMEOVER_HEIGHT);
+    var win2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2, "You Win!");
+    win1_svg.addClass('win');
+    win2_svg.addClass('levelmessage');
+  }
+
+  function loseMessage(container, viewbox) {
+    var lose1_svg = container.rect(0, viewbox.height/2 -55, container.attr('width'), GAMEOVER_HEIGHT);
+    var lose2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2, "You Lose!");
+    lose1_svg.addClass('lose');
+    lose2_svg.addClass('levelmessage');
   }
 
   this.checkGameOver = function() {
-    if (player.lifes === 0) {
-      var lose1_svg = container.rect(0, viewbox.height/2 -75, container.attr('width'), GAMEOVER_HEIGHT);
-      var lose2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 - 50, "You Lose!");
-      var score_svg = container.text(viewbox.width/2 - 40, viewbox.height/2 - 25, "Score: " + player.score);
-      submit_score_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 + 10, "Submit Score?");
-      yes_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 + 35, "Yes");
-      no_svg = container.text(viewbox.width/2 + 15, viewbox.height/2 + 35, "No");
-      lose1_svg.addClass('lose');
-      lose2_svg.addClass('levelmessage');
-      score_svg.addClass('levelmessage');
-      submit_score_svg.addClass('levelmessage');
-      yes_svg.addClass('levelmessage');
-      no_svg.addClass('levelmessage');
-      yes_svg.attr({
-        id: 'yes'
-      });
-      no_svg.attr({
-        id: 'no'
-      });
+    if ( (players[0].lifes === 0) || (players[1].lifes === 0) ) {
+      if ( (players[0].lifes === 0) ) {
+          loseMessage(players[0].container, players[0].viewbox);
+          winMessage(players[1].container, players[1].viewbox);
+      }
+      else {
+        loseMessage(players[1].container, players[1].viewbox);
+        winMessage(players[0].container, players[0].viewbox);
+      }
       return true;
     }
     else {
-      if (level > LIMIT_LEVEL) {
-        var win1_svg = container.rect(0, viewbox.height/2 -75, container.attr('width'), GAMEOVER_HEIGHT);
-        var win2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 - 50, "You Win!");
-        var score_svg = container.text(viewbox.width/2 - 40, viewbox.height/2 - 25, "Score: " + player.score);
-        submit_score_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 + 10, "Submit Score?");
-        yes_svg = container.text(viewbox.width/2 - 35, viewbox.height/2 + 35, "Yes");
-        no_svg = container.text(viewbox.width/2 + 15, viewbox.height/2 + 35, "No");
-        win1_svg.addClass('win');
-        win2_svg.addClass('levelmessage');
-        score_svg.addClass('levelmessage');
+      if ( (players[0].amount_bricks === 0) || (players[1].amount_bricks === 0) ) {
+        if ( (players[0].amount_bricks === 0) ) {
+            loseMessage(players[1].container, players[1].viewbox);
+            winMessage(players[0].container, players[0].viewbox);
+        }
+        else {
+          loseMessage(players[0].container, players[0].viewbox);
+          winMessage(players[1].container, players[1].viewbox);
+        }
         return true;
       }
       else {
@@ -1418,97 +1420,162 @@ function Arkanoid() {
     }
   };
 
-  this.checkSubmit = function(confirm) {
-    submit_score_svg.remove();
-    yes_svg.remove();
-    no_svg.remove();
-    if (confirm == "Y") {
-      var submitted_svg = container.text(viewbox.width/2 - 60, viewbox.height/2 + 10, "Score Submitted");
-      var ty_playing_svg = container.text(viewbox.width/2 - 90, viewbox.height/2 + 30, "Thank you for Playing!");
-      submitted_svg.addClass('levelmessage');
-    }
-    else {
-      var ty_playing_svg = container.text(viewbox.width/2 - 90, viewbox.height/2 + 10, "Thank you for Playing!");
-    }
-    ty_playing_svg.addClass('levelmessage');
-  };
-
-  this.getPlayerScore = function() {
-    return player.score;
-  };
-
   this.init = function() {
-    var background = container.rect(0, 0, container.attr('width'), container.attr('height'));
-    background.addClass('backgroundlevel');
-    player.init();
-    player.initLevel(level);
-    background_start_svg = container.rect(0, 0, container.attr('width'), container.attr('height'));
-    background_start_svg.addClass('backgroundlevel');
-    var controls1_svg = container.text(viewbox.width/2 - 40, viewbox.height/2 - 50, "Controls:");
-    var controls2_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 - 25, "Z: Move Left");
-    var controls3_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 - 5, "X: Move Right");
-    var controls4_svg = container.text(viewbox.width/2 - 55, viewbox.height/2 + 15, "S: Shoot");
-    var controls5_svg = container.text(viewbox.width/2 - 90, viewbox.height/2 + 100, "Press \"Space\" to Start.");
+    for (i = 0; i < players.length; i++) {
+      var background = players[i].container.rect(0, 0, players[i].container.attr('width'), players[i].container.attr('height'));
+      background.addClass('backgroundlevel');
+    }
+    players[0].init();
+    players[1].init();
+    players[0].initLevel(this.level);
+    players[1].initLevel(this.level);
+    var controls1_svg = players[0].container.text(players[0].viewbox.width/2 - 40, players[0].viewbox.height/2 - 50, "Controls:");
+    var controls2_svg = players[0].container.text(players[0].viewbox.width/2 - 55, players[0].viewbox.height/2 - 25, "Z: Move Left");
+    var controls3_svg = players[0].container.text(players[0].viewbox.width/2 - 55, players[0].viewbox.height/2 - 5, "X: Move Right");
+    var controls4_svg = players[0].container.text(players[0].viewbox.width/2 - 55, players[0].viewbox.height/2 + 15, "S: Shoot");
+    var controls5_svg = players[0].container.text(players[0].viewbox.width/2 - 90, players[0].viewbox.height/2 + 100, "Press \"Space\" to Start.");
     controls1_svg.addClass('levelmessage');
     controls2_svg.addClass('levelmessage');
     controls3_svg.addClass('levelmessage');
     controls4_svg.addClass('levelmessage');
     controls5_svg.addClass('levelmessage');
-    controls_svg = container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
+    background_start_player1_svg = players[0].container.rect(0, 0, players[0].container.attr('width'), players[0].container.attr('height'));
+    background_start_player1_svg.addClass('backgroundlevel');
+    controls_player1_svg = players[0].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
+    background_start_player2_svg = players[1].container.rect(0, 0, players[1].container.attr('width'), players[1].container.attr('height'));
+    background_start_player2_svg.addClass('backgroundlevel');
+  };
+
+  function removeMessages() {
+    background_start_player1_svg.remove();
+    controls_player1_svg.remove();
+    ready1_svg.remove();
+    background_start_player2_svg.remove();
+    if (ready2_svg != null){
+      ready2_svg.remove();
+    }
+  }
+
+  this.sendData = function() {
+    var data = new Object();
+    var response;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'controllers/send_player_data.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    data.player_data = this.player_data;
+    data.game_started = game_started1;
+    data.player_paddle = players[0].paddle;
+    data.player_balls = players[0].balls;
+    var jsondata= JSON.stringify(data);
+    xhr.send("data=" + jsondata);
+  };
+
+  this.receiveData = function() {
+    var data = new Object();
+    var response;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'controllers/receive_player_data.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.responseText !== "") {
+          response = JSON.parse(xhr.responseText);
+          game_started2 = response.game_started;
+          players[1].paddle.x = response.player_paddle.x;
+          for (i = 0; i < players[1].balls.length;i++) {
+            players[1].balls[i].cx = response.player_balls[i].cx;
+            players[1].balls[i].cy = response.player_balls[i].cy;
+            players[1].balls[i].touch_bottom = response.player_balls[i].touch_bottom;
+          }
+        }
+      }
+    };
+    data.rival_data = this.rival_data;
+    var jsondata= JSON.stringify(data);
+    xhr.send("data=" + jsondata);
+  };
+
+  this.searchGame = function(game) {
+    var data = new Object();
+    var response;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'controllers/search_game.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        response = JSON.parse(xhr.responseText);
+        if (response.game_status == MATCHING) {
+          if (game.game_status == SEARCHING) {
+            game.game_status = response.game_status;
+            game.id_game = response.id_game;
+          }
+          game.searchGame(game);
+        }
+        else {
+          if (response.game_status == MATCHED) {
+            game.game_status = response.game_status;
+            game.level = Number(response.level);
+            game.player_data = response.player_data;
+            game.rival_data = response.rival_data;
+            game.game_matched = true;
+            game.sendData();
+            game.init();
+          }
+        }
+      }
+    };
+    data.game_status = game.game_status;
+    if (game.game_status == MATCHING) {
+       data.id_game  = game.id_game;
+    }
+    var jsondata= JSON.stringify(data);
+    xhr.send("data=" + jsondata);
   };
 
   this.run = function() {
-    if (game_started) {
-      if (level_started) {
-        update();
-        draw();
-        checkPlayerLoseLife();
-        checkPlayerWinLevel();
-      }
+    this.receiveData();
+    if (game_started1 && game_started2) {
+      removeMessages();
+      update();
+      draw();
+      checkPlayersLoseLife();
     }
     else {
       if (Key.isDown(Key.START)) {
-        game_started = true;
-        background_start_svg.remove();
-        controls_svg.remove();
-        levelTransition();
+        game_started1 = true;
+        if (ready1_svg == null) {
+          ready1_svg = players[0].container.text(players[0].viewbox.width/2 - 30, players[0].viewbox.height/2 + 150, "Ready!");
+          ready1_svg.addClass('levelmessage');
+        }
+      }
+      if (game_started2) {
+        if (ready2_svg == null) {
+          ready2_svg = players[1].container.text(players[1].viewbox.width/2 - 30, players[1].viewbox.height/2 + 150, "Ready!");
+          ready2_svg.addClass('levelmessage');
+        }
       }
     }
+    this.sendData();
   };
 
 }
 
 //Main.
 $(document).ready(function() {
+  var elementExists = document.getElementById("container1");
+  if (elementExists !== null) {
+    window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
+    window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
 
-var elementExists = document.getElementById("container");
-if (elementExists !== null) {
-  window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
-  window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
-
-  var game = new Arkanoid();
-  game.init();
-  var loop = setInterval(function() {
-    game.run();
-    if (game.checkGameOver()){
-      clearInterval(loop);
-    }
-  }, 1000/60);
-
-  $('svg').on("click", '#yes', function() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'controllers/submit_score.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
-        game.checkSubmit("Y");
+    var game = new Arkanoid();
+    game.searchGame(game);
+    var loop = setInterval(function() {
+      if (game.game_matched) {
+        game.run();
+        if (game.checkGameOver()){
+          clearInterval(loop);
+        }
       }
-    };
-    xhr.send("score=" + game.getPlayerScore());
-  });
-
-  $('svg').on("click", '#no', function() {
-    game.checkSubmit("N");
-  });
-}
+    }, 1000/30);
+  }
 });

@@ -1,6 +1,8 @@
 <?php
   session_start();
+  $_SESSION['prev'] = "play_singleplayer.php";
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -9,33 +11,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="google-signin-client_id" content="332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com">
   <title>Arkanoid | Single Player</title>
-  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/general.css" rel="stylesheet" />
   <link href="css/game.css" rel="stylesheet" />
   <script src="https://apis.google.com/js/platform.js" async defer></script>
-  <script type="text/javascript" src="js/jquery-2.2.3.min.js"></script>
-  <script type="text/javascript" src="js/snap.svg-min.js"></script>
+  <script type="text/javascript" src="js/libs/jquery-2.2.3.min.js"></script>
+  <script type="text/javascript" src="js/libs/snap.svg-min.js"></script>
+  <script type="text/javascript" src="js/general.js"></script>
   <script type="text/javascript" src="js/singleplayer.js"></script>
-  <script type="text/javascript" src="js/script.js"></script>
 </head>
 
 <body>
   <header>
     <h1>
       <span class="title">Arkanoid</span>
-      <a href="index.php"><img class="logo" src="img/logo.png" alt="Arkanoid"/></a>
+      <a href="index.php"><img class="logo" src="resources/img/logo.png" alt="Arkanoid"/></a>
     </h1>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
     <?php
       if (isset($_SESSION['name']) && $_SESSION['name']) {
-        echo("<script>
-                $('.g-signin2').css('display', 'none');
-              </script>");
         echo('<div class ="dropdown logged">
                 <span class="dropdownbutton button">'.$_SESSION['name'].'</span>
                 <ul class="dropdown-content">
                   <li><a class="button" onclick=signOut();>Log out</a></li>
                 </ul>
               </div>');
+      }
+      else {
+        echo('<div class="g-signin2" data-onsuccess="onSignIn"></div>');
       }
     ?>
   </header>
@@ -70,7 +71,7 @@
     <?php
       if (isset($_SESSION['name']) && $_SESSION['name']) {
         echo('<div class="gamesingle">
-              <svg id="container" width="100%" height="100%" viewBox="0 0 520 525"></svg>
+                <svg id="container" width="100%" height="100%" viewBox="0 0 520 525"></svg>
               </div>');
       }
       else {

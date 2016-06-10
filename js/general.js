@@ -1,29 +1,48 @@
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'login.php', true);
+  xhr.open('POST', 'controllers/login.php', true);
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-        location.reload();
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        window.location.href=window.location.href;
     }
   };
   xhr.send("email=" + profile.getEmail() + "&name=" + profile.getName());
 }
 
 function signOut() {
-  var auth2 = gapi.auth2.getAuthInstance();
-  auth2.signOut().then(function () {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'logout.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
-          location.reload();
-      }
-    };
-    xhr.send();
-  });
+  gapi.load('auth2', function() {
+   gapi.auth2.init({
+       client_id: '332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com'
+   })
+   .then(function() {
+       auth2 = gapi.auth2.getAuthInstance();
+       auth2.signOut().then(function () {
+         var xhr = new XMLHttpRequest();
+         xhr.open('POST', 'controllers/logout.php', true);
+         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+         xhr.onreadystatechange = function() {
+           if (xhr.readyState == 4) {
+             window.location.href=window.location.href;
+           }
+         };
+         xhr.send();
+       });
+   });
+ });
+}
+
+function searchGame() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'controllers/search_game.php', true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        return xhr.responseText;
+    }
+  };
+  xhr.send();
 }
 
 $(document).ready(function() {
@@ -44,7 +63,7 @@ $(document).ready(function() {
         $(".dots .dot").removeClass("active");
         $("#dot"+String(imageposition)).addClass("active");
         sliding = false;
-      })
+      });
   }
 
   var slideTimer = setInterval(slideImage, SLIDETIME, false, 1);

@@ -41,8 +41,8 @@ function Bullet (x, y) {
 
   this.init = function (container) {
     bullet_svg = container.rect(this.x, this.y, this.width, this.height, 10, 10);
-    bullet_svg.addClass('bullet');
-  }
+    bullet_svgaddClass('bullet');
+  };
 
   this.update = function (viewbox) {
     if (!this.collision) {
@@ -51,15 +51,15 @@ function Bullet (x, y) {
         this.collision = true;
       }
     }
-  }
+  };
 
   this.hit = function () {
     this.collision = true;
-  }
+  };
 
   this.remove = function () {
     bullet_svg.remove();
-  }
+  };
 
   this.draw = function() {
     if (this.collision) {
@@ -68,7 +68,7 @@ function Bullet (x, y) {
     else {
       bullet_svg.attr({y:this.y});
     }
-  }
+  };
 
 }
 
@@ -95,7 +95,7 @@ function Barrier (y) {
                                       480, this.y, 510, this.y + 10,
                                       520, this.y + 5);
     barrier1_svg.addClass('barrier');
-  }
+  };
 
   this.initBarrier2 = function(container) {
     barrier2_svg = container.polyline(0, this.y + 15, 30, this.y + 5,
@@ -109,14 +109,14 @@ function Barrier (y) {
                                       480, this.y + 15, 510, this.y + 5,
                                       520, this.y + 10);
     barrier2_svg.addClass('barrier');
-  }
+  };
 
   this.barrierForm = function (container) {
     this.active = true;
     this.initBarrier1(container);
     var self = this;
     timer_barrier1 = setInterval(function() {
-      if (barrier1_svg == null) {
+      if (barrier1_svg === null) {
         self.initBarrier1(container);
       }
       else {
@@ -125,29 +125,29 @@ function Barrier (y) {
       }
     }, BARRIER_INTERVAL_TIME);
     timer_barrier2 = setInterval(function() {
-      if (barrier2_svg == null) {
+      if (barrier2_svg === null) {
         self.initBarrier2(container);
       }
       else {
         barrier2_svg.remove();
         barrier2_svg = null;
       }
-    }, BARRIER_INTERVAL_TIME);;
-  }
+    }, BARRIER_INTERVAL_TIME);
+  };
 
   this.endBarrierForm = function () {
     this.active = false;
     clearInterval(timer_barrier1);
     clearInterval(timer_barrier2);
-    if (barrier1_svg != null) {
+    if (barrier1_svg !== null) {
       barrier1_svg.remove();
       barrier1_svg = null;
     }
-    if (barrier2_svg != null) {
+    if (barrier2_svg !== null) {
       barrier2_svg.remove();
       barrier2_svg = null;
     }
-  }
+  };
 
 }
 
@@ -207,24 +207,24 @@ function Paddle(viewbox) {
     left_box_barrier_svg.addClass('cannon2');
     right_box_barrier_svg.addClass('cannon2');
     center_paddle_svg.addClass('centerpaddle');
-  }
+  };
 
   this.barrierForm = function(container) {
     left_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT + 18}, INCREMENT_TIME);
     right_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT + 18}, INCREMENT_TIME);
     this.barrier.barrierForm(container);
-  }
+  };
 
 
   this.endBarrierForm = function () {
     left_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT - 10}, INCREMENT_TIME);
     right_box_barrier_svg.animate({height: BOX_BARRIER_HEIGHT - 10}, INCREMENT_TIME);
     this.barrier.endBarrierForm();
-  }
+  };
 
   this.isBarrierActive = function() {
     return this.barrier.active;
-  }
+  };
 
   this.cannonForm = function () {
     this.bullets = [];
@@ -233,7 +233,7 @@ function Paddle(viewbox) {
     right_box_cannon_svg.animate({y: this.y - 3}, INCREMENT_TIME);
     left_cannon_svg.animate({y: this.y - 5}, INCREMENT_TIME);
     right_cannon_svg.animate({y: this.y - 5}, INCREMENT_TIME);
-  }
+  };
 
   this.endCannonForm = function () {
     cannon_form = false;
@@ -241,7 +241,7 @@ function Paddle(viewbox) {
     right_box_cannon_svg.animate({y: this.y}, INCREMENT_TIME);
     left_cannon_svg.animate({y: this.y}, INCREMENT_TIME);
     right_cannon_svg.animate({y: this.y}, INCREMENT_TIME);
-  }
+  };
 
   this.shoot = function (container) {
     if (cannon_form && can_shoot) {
@@ -256,7 +256,7 @@ function Paddle(viewbox) {
         can_shoot = true;
       }, DELAY_SHOT);
     }
-  }
+  };
 
   this.expand = function(viewbox) {
     if (this.x + this.width > (viewbox.width - PADDLE_INCREMENT)) {
@@ -266,26 +266,26 @@ function Paddle(viewbox) {
     center_paddle_svg.animate({width: PADDLE_WIDTH + PADDLE_INCREMENT}, INCREMENT_TIME);
     this.center_width = PADDLE_WIDTH + PADDLE_INCREMENT;
     this.width = this.center_width + PADDLE_BORDER_WIDTH * 2;
-  }
+  };
 
   this.compress = function() {
     right_border_svg.animate({width: PADDLE_BORDER_SVG_WIDTH}, INCREMENT_TIME);
     center_paddle_svg.animate({width: PADDLE_WIDTH}, INCREMENT_TIME);
     this.center_width = PADDLE_WIDTH;
     this.width = this.center_width + PADDLE_BORDER_WIDTH * 2;
-  }
+  };
 
   this.moveRight = function(viewbox) {
     if ((this.x + this.center_width + PADDLE_BORDER_WIDTH * 2 + PADDLE_SPEED) < viewbox.width) {
       this.x = this.x + PADDLE_SPEED;
     }
-  }
+  };
 
   this.moveLeft = function() {
     if( (this.x - PADDLE_SPEED) > 0) {
       this.x = this.x - PADDLE_SPEED;
     }
-  }
+  };
 
   this.remove = function () {
     left_border_svg.remove();
@@ -300,11 +300,11 @@ function Paddle(viewbox) {
     for (i = 0; i < this.bullets.length; i++) {
       this.bullets[i].remove();
     }
-  }
+  };
 
   this.update = function (id, container, viewbox) {
     if (this.can_move) {
-      if (id == 0) {
+      if (id === 0) {
         if (Key.isDown(Key.LEFT1)){
           this.moveLeft();
         }
@@ -330,7 +330,7 @@ function Paddle(viewbox) {
     for (i = 0; i < this.bullets.length; i++) {
       this.bullets[i].update(viewbox);
     }
-  }
+  };
 
   this.draw = function() {
     left_border_svg.attr({x:this.x});
@@ -345,9 +345,9 @@ function Paddle(viewbox) {
     for (i = 0; i < this.bullets.length; i++) {
       this.bullets[i].draw();
     }
-  }
+  };
 
-};
+}
 
 function Ball(cx, cy, speed) {
 
@@ -390,7 +390,7 @@ function Ball(cx, cy, speed) {
       this.speed_y = this.speed_y - INCREMENT_SPEED;
     }
     this.total_speed = this.total_speed + INCREMENT_SPEED;
-  }
+  };
 
   this.init = function(container) {
     ball_svg = container.circle(this.cx, this.cy, this.radius);
@@ -399,7 +399,7 @@ function Ball(cx, cy, speed) {
     speed_timer = setInterval(function() {
       self.incrementSpeed();
     }, INCREMENT_TIME);
-  }
+  };
 
   this.update = function (paddle, viewbox) {
     if ( (this.cx + this.radius + this.speed_x > viewbox.width) || (this.cx - this.radius + this.speed_x < 0) ) {
@@ -413,11 +413,11 @@ function Ball(cx, cy, speed) {
     }
     this.cx = this.cx + this.speed_x;
     this.cy = this.cy + this.speed_y;
-  }
+  };
 
   this.remove = function () {
     ball_svg.remove();
-  }
+  };
 
   this.draw = function() {
     if (this.touch_bottom) {
@@ -426,7 +426,7 @@ function Ball(cx, cy, speed) {
     else {
       ball_svg.attr({cx:this.cx, cy:this.cy});
     }
-  }
+  };
 
 }
 
@@ -477,7 +477,7 @@ function Brick(x, y, type) {
       }
     }
     brick_svg = container.group(border_svg, inner_svg);
-  }
+  };
 
   this.hit = function (container) {
     if ( (this.type == 1) && (this.hits > 0) ) {
@@ -494,7 +494,7 @@ function Brick(x, y, type) {
         }
       }
       else {
-        if (this.type == 0) {
+        if (this.type === 0) {
           var blink_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
           blink_svg.addClass('blinkbrick');
           setTimeout(function(){
@@ -503,20 +503,20 @@ function Brick(x, y, type) {
         }
       }
     }
-  }
+  };
 
   this.remove = function() {
     brick_svg.remove();
-  }
+  };
 
   this.draw = function() {
-    if ( (this.hits == 0) && (this.type != 0)) {
+    if ( (this.hits === 0) && (this.type !== 0)) {
       brick_svg.remove();
       if (damage_svg != null) {
         damage_svg.remove();
       }
     }
-  }
+  };
 
 }
 
@@ -540,9 +540,10 @@ function PickUp (x, y, active_type) {
   this.touch_bottom = false;
   this.ended = false;
   this.active = false;
+  var rnd;
   var all_types = ["A", "B", "C", "D", "E", "F", "H", "I", "J"];
   if (active_type == "NONE") {
-    var rnd = Math.floor(Math.random() * all_types.length);
+    rnd = Math.floor(Math.random() * all_types.length);
     this.type = all_types[rnd];
   }
   else {
@@ -552,7 +553,7 @@ function PickUp (x, y, active_type) {
         types.push(all_types[i]);
       }
     }
-    var rnd = Math.floor(Math.random() * types.length);
+    rnd = Math.floor(Math.random() * types.length);
     this.type = types[rnd];
   }
   var pickup_svg;
@@ -600,7 +601,7 @@ function PickUp (x, y, active_type) {
       case "J": pickup_svg.addClass('pickup_j');
                 break;
     }
-  }
+  };
 
   function message(paddle, message, container, viewbox, isrival = false) {
     if (paddle.x < (viewbox.width / 2)) {
@@ -613,7 +614,7 @@ function PickUp (x, y, active_type) {
       message_svg.addClass('pickupmessage');
     }
     else {
-      message_svg.addClass('pickupmessagerival')
+      message_svg.addClass('pickupmessagerival');
     }
     message_svg.animate({y: paddle.y - 40}, 2000);
     timer_message = setTimeout(function(){
@@ -623,7 +624,7 @@ function PickUp (x, y, active_type) {
 
   this.removeMessage = function () {
     message_svg.remove();
-  }
+  };
 
   this.effect = function(player, rival) {
     switch (this.type) {
@@ -708,13 +709,13 @@ function PickUp (x, y, active_type) {
 
       case "I": if (!this.active) {
                   this.active = true;
-                  if (rival.pickup_active != null) {
+                  if (rival.pickup_active !== null) {
                     if (!rival.pickup_active.ended) {
                       rival.pickup_active.endEffect(rival.balls, rival.paddle, rival);
                     }
                   }
                   rival.pickup_active = null;
-                  if (rival.pickup != null) {
+                  if (rival.pickup !== null) {
                     if (rival.pickup_floating) {
                       rival.pickup.remove();
                       rival.pickup_floating = false;
@@ -745,7 +746,7 @@ function PickUp (x, y, active_type) {
                 }
                 break;
     }
-  }
+  };
 
   this.endEffect = function(balls, paddle, rival) {
     switch (this.type) {
@@ -811,19 +812,19 @@ function PickUp (x, y, active_type) {
                 this.ended = true;
                 break;
     }
-  }
+  };
 
   this.update = function (viewbox) {
     this.y = this.y + this.speed;
     if (this.y > viewbox.height) {
       this.touch_bottom = true;
     }
-  }
+  };
 
   this.remove = function() {
     pickup_svg.remove();
     letter_svg.remove();
-  }
+  };
 
   this.draw = function() {
     if (this.touch_bottom) {
@@ -833,7 +834,7 @@ function PickUp (x, y, active_type) {
       pickup_svg.attr({y:this.y});
       letter_svg.attr({y:this.y + 12});
     }
-  }
+  };
 
 }
 
@@ -875,7 +876,7 @@ function Player (id, lifes, container) {
     switch (level) {
       case 1: brick_y = 50;
               for (i = 0; i < BRICKS_LVL1; i++) {
-                if (row == 0) {
+                if (row === 0) {
                   this.bricks[i] = new Brick(brick_x, brick_y, 2);
                 }
                 else {
@@ -928,7 +929,7 @@ function Player (id, lifes, container) {
               var first = true;
               var count = 0;
               for (i = 0; i < BRICKS_LVL3; i++) {
-                if ( ((row % 2) != 0) && (row != 7) ) {
+                if ( ((row % 2) !== 0) && (row != 7) ) {
                   if ( (column >= 0) && (column < 3) ) {
                     if (first && (count < 3)) {
                       this.bricks[i] = new Brick(brick_x, brick_y, 1);
@@ -984,7 +985,7 @@ function Player (id, lifes, container) {
       case 4: brick_y = BRICK_PADDING_Y;
               j = 0;
               for (i = 0; i < BRICKS_LVL4; i++) {
-                if ( (row == 0) || (row == 10) ) {
+                if ( (row === 0) || (row == 10) ) {
                   if ( (column > 0) && (column < 12)){
                     this.bricks[j] = new Brick(brick_x, brick_y, 2);
                     this.amount_bricks++;
@@ -1001,7 +1002,7 @@ function Player (id, lifes, container) {
                   }
                   else {
                     if ( (row == 2) || (row == 8) ) {
-                      if ( (column != 0) && (column != 2) && (column != 10) && (column != 12)){
+                      if ( (column !== 0) && (column != 2) && (column != 10) && (column != 12)){
                         this.bricks[j] = new Brick(brick_x, brick_y, 2);
                         this.amount_bricks++;
                         j++;
@@ -1017,7 +1018,7 @@ function Player (id, lifes, container) {
                       }
                       else {
                         if ( (row == 4) || (row == 6) ) {
-                          if ( (column != 0) && (column != 2) && (column != 4) && (column != 8) && (column != 10) && (column != 12)){
+                          if ( (column !== 0) && (column != 2) && (column != 4) && (column != 8) && (column != 10) && (column != 12)){
                             this.bricks[j] = new Brick(brick_x, brick_y, 2);
                             this.amount_bricks++;
                             j++;
@@ -1025,7 +1026,7 @@ function Player (id, lifes, container) {
                         }
                         else {
                           if (row == 5) {
-                            if ( (column != 0) && (column != 2) && (column != 4) && (column != 6) && (column != 8) && (column != 10) && (column != 12)){
+                            if ( (column !== 0) && (column != 2) && (column != 4) && (column != 6) && (column != 8) && (column != 10) && (column != 12)){
                               this.bricks[j] = new Brick(brick_x, brick_y, 2);
                               this.amount_bricks++;
                               j++;
@@ -1061,7 +1062,7 @@ function Player (id, lifes, container) {
                   }
                 }
                 else {
-                  if ( (row == 0) || (row == 10) ){
+                  if ( (row === 0) || (row == 10) ){
                     this.bricks[i] = new Brick(brick_x, brick_y, 2);
                     this.amount_bricks++;
                   }
@@ -1086,12 +1087,12 @@ function Player (id, lifes, container) {
     for(i = 0; i < this.bricks.length; i++) {
       this.bricks[i].init(this.container);
     }
-  }
+  };
 
   this.init = function () {
     this.paddle.init(this.container);
     this.balls[0].init(this.container);
-  }
+  };
 
   this.checkLoseLife = function() {
     var flag = true;
@@ -1106,16 +1107,16 @@ function Player (id, lifes, container) {
     else {
       return false;
     }
-  }
+  };
 
   this.checkWinLevel = function()  {
-    if (this.amount_bricks == 0) {
+    if (this.amount_bricks === 0) {
       return true;
     }
     else {
       return false;
     }
-  }
+  };
 
   this.addPickUp = function(x, y) {
     var rnd;
@@ -1144,7 +1145,7 @@ function Player (id, lifes, container) {
         this.pickup_floating = true;
       }
     }
-  }
+  };
 
   this.collisionBall = function() {
     for (j = 0; j < this.balls.length; j++) {
@@ -1227,13 +1228,13 @@ function Player (id, lifes, container) {
       for(i = 0; i < this.bricks.length; i++) {
         var remove_brick = false;
         var hit_brick = false;
-        if( (this.bricks[i].hits > 0) || (this.bricks[i].type == 0) ) {
+        if( (this.bricks[i].hits > 0) || (this.bricks[i].type === 0) ) {
           //Colision con la parte superior e inferior.
           if ( ((ball_y < this.bricks[i].y + this.bricks[i].height) && (ball_y > this.bricks[i].y)) || ((ball_y2 < this.bricks[i].y + this.bricks[i].height) && (ball_y2 > this.bricks[i].y)) ) {
             if ( (this.balls[j].cx > this.bricks[i].x) && (this.balls[j].cx < this.bricks[i].x + this.bricks[i].width) ){
               this.balls[j].speed_y = -this.balls[j].speed_y;
               this.bricks[i].hit(this.container);
-              if ( (this.bricks[i].type != 0) && this.bricks[i].hits == 0) {
+              if ( (this.bricks[i].type !== 0) && this.bricks[i].hits === 0) {
                 remove_brick = true;
               }
               hit_brick = true;
@@ -1245,7 +1246,7 @@ function Player (id, lifes, container) {
               if(!hit_brick){
                 this.balls[j].speed_x = -this.balls[j].speed_x;
                 this.bricks[i].hit(this.container);
-                if ( (this.bricks[i].type != 0) && this.bricks[i].hits == 0) {
+                if ( (this.bricks[i].type !== 0) && this.bricks[i].hits === 0) {
                   remove_brick = true;
                 }
               }
@@ -1258,7 +1259,7 @@ function Player (id, lifes, container) {
         }
       }
     }
-  }
+  };
 
   this.collisionPickUp = function(rival) {
     if (this.pickup_floating && !this.pickup_blocked) {
@@ -1270,14 +1271,14 @@ function Player (id, lifes, container) {
         if ( ((pickup_x > this.paddle.x) && (pickup_x < this.paddle.x + this.paddle.width)) || ((pickup_x2 < this.paddle.x + this.paddle.width) && (pickup_x2 > this.paddle.x)) ) {
           this.pickup.touch_bottom = true;
           this.pickup_floating = false;
-          if (this.pickup_active != null) {
+          if (this.pickup_active !== null) {
             this.pickup_active.endEffect(this.balls, this.paddle, rival);
           }
           this.pickup_active = this.pickup;
         }
       }
     }
-  }
+  };
 
   this.collisionBullets = function() {
     for (i = 0; i < this.paddle.bullets.length; i++) {
@@ -1290,12 +1291,12 @@ function Player (id, lifes, container) {
           var brick_y2 = this.bricks[j].y + this.bricks[j].height;
           var brick_x = this.bricks[j].x;
           var brick_x2 = this.bricks[j].x + this.bricks[j].width;
-          if( (this.bricks[j].hits > 0) || (this.bricks[j].type == 0) ) {
+          if( (this.bricks[j].hits > 0) || (this.bricks[j].type === 0) ) {
             if (bullet_y < brick_y2) {
               if ( ((bullet_x > brick_x) && (bullet_x < brick_x2)) || ((bullet_x2 > brick_x) && (bullet_x2 < brick_x2)) ) {
                 this.paddle.bullets[i].hit();
                 this.bricks[j].hit(this.container);
-                if ( (this.bricks[j].type != 0) && this.bricks[j].hits == 0) {
+                if ( (this.bricks[j].type !== 0) && this.bricks[j].hits === 0) {
                   remove_brick = true;
                 }
               }
@@ -1308,7 +1309,7 @@ function Player (id, lifes, container) {
         }
       }
     }
-  }
+  };
 
   this.update = function(rival) {
     for(i = 0; i < this.balls.length; i++) {
@@ -1330,7 +1331,7 @@ function Player (id, lifes, container) {
         this.pickup_active.endEffect(this.balls, this.paddle, rival);
       }
     }
-  }
+  };
 
   this.draw = function() {
     this.paddle.draw();
@@ -1343,7 +1344,7 @@ function Player (id, lifes, container) {
     if (this.pickup != null) {
       this.pickup.draw();
     }
-  }
+  };
 
 }
 
@@ -1392,13 +1393,13 @@ function Arkanoid() {
   function loseMessage(container, viewbox) {
     var lose1_svg = container.rect(0, viewbox.height/2 -55, container.attr('width'), GAMEOVER_HEIGHT);
     var lose2_svg = container.text(viewbox.width/2 - 35, viewbox.height/2, "You Lose!");
-    lose1_svg.addClass('lose')
+    lose1_svg.addClass('lose');
     lose2_svg.addClass('levelmessage');
   }
 
   this.checkGameOver = function() {
-    if ( (players[0].lifes == 0) || (players[1].lifes == 0) ) {
-      if ( (players[0].lifes == 0) ) {
+    if ( (players[0].lifes === 0) || (players[1].lifes === 0) ) {
+      if ( (players[0].lifes === 0) ) {
           loseMessage(players[0].container, players[0].viewbox);
           winMessage(players[1].container, players[1].viewbox);
       }
@@ -1409,8 +1410,8 @@ function Arkanoid() {
       return true;
     }
     else {
-      if ( (players[0].amount_bricks == 0) || (players[1].amount_bricks == 0) ) {
-        if ( (players[0].amount_bricks == 0) ) {
+      if ( (players[0].amount_bricks === 0) || (players[1].amount_bricks === 0) ) {
+        if ( (players[0].amount_bricks === 0) ) {
             loseMessage(players[1].container, players[1].viewbox);
             winMessage(players[0].container, players[0].viewbox);
         }
@@ -1424,7 +1425,7 @@ function Arkanoid() {
         return false;
       }
     }
-  }
+  };
 
   this.init = function() {
     for (i = 0; i < players.length; i++) {
@@ -1438,7 +1439,7 @@ function Arkanoid() {
     players[1].initLevel(rnd);
     for (i = 0; i < players.length; i++) {
       var controls1_svg = players[i].container.text(players[i].viewbox.width/2 - 40, players[i].viewbox.height/2 - 50, "Controls:");
-      if (i == 0) {
+      if (i === 0) {
         var controls2_svg = players[i].container.text(players[i].viewbox.width/2 - 55, players[i].viewbox.height/2 - 25, "Z: Move Left");
         var controls3_svg = players[i].container.text(players[i].viewbox.width/2 - 55, players[i].viewbox.height/2 - 5, "X: Move Right");
         var controls4_svg = players[i].container.text(players[i].viewbox.width/2 - 55, players[i].viewbox.height/2 + 15, "S: Shoot");
@@ -1455,7 +1456,7 @@ function Arkanoid() {
       controls3_svg.addClass('levelmessage');
       controls4_svg.addClass('levelmessage');
       controls5_svg.addClass('levelmessage');
-      if (i == 0) {
+      if (i === 0) {
         background_start_player1_svg = players[i].container.rect(0, 0, players[i].container.attr('width'), players[i].container.attr('height'));
         background_start_player1_svg.addClass('backgroundlevel');
         controls_player1_svg = players[i].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
@@ -1466,7 +1467,7 @@ function Arkanoid() {
         controls_player2_svg = players[i].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
       }
     }
-  }
+  };
 
   function removeMessages() {
     background_start_player1_svg.remove();
@@ -1502,7 +1503,7 @@ function Arkanoid() {
         }
       }
     }
-  }
+  };
 
 }
 

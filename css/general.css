@@ -33,13 +33,13 @@
     }
 
     .big-menu li {
-      margin: 0px;
+      margin: 0;
       margin-top: 5px;
       width: 100%;
     }
 
     .big-menu li span, .big-menu li a {
-      padding: 5px 0px;
+      padding: 5px 0;
       border-bottom: 1px solid blue;
     }
 
@@ -52,8 +52,8 @@
 
       .dropdown-content li {
         width: 100%;
-        margin: 5px 0px;
-        padding: 0px;
+        margin: 5px 0;
+        padding: 0;
       }
 
     .svg-facebook {
@@ -108,7 +108,7 @@
 
     .logged ul {
       font-size: 12px;
-      padding: 0px;
+      padding: 0;
     }
 
   .small-menu {
@@ -127,9 +127,9 @@
 
     .dropdown-content li {
       min-width: 120px;
-      padding: 0px;
+      padding: 0;
       padding-left: 5px;
-      margin: 0px 0px;
+      margin: 0 0;
       background-color: black;
     }
 
@@ -186,7 +186,7 @@
 
       .logged ul {
         font-size: 16px;
-        padding: 0px;
+        padding: 0;
       }
 
   nav {
@@ -209,9 +209,9 @@
 
     .dropdown-content li {
       min-width: 160px;
-      padding: 0px;
+      padding: 0;
       padding-left: 5px;
-      margin: 0px 0px;
+      margin: 0 0;
     }
 
     .dropdown-content li a, .dropdown-content li span{
@@ -248,19 +248,19 @@
 
 @font-face {
 	font-family: arkanoid;
-	src: url('../fonts/Iomanoid-Regular.eot');
-	src: url('../fonts/Iomanoid-Regular.eot?#iefix') format('embedded-opentype'),
-		url('../fonts/Iomanoid-Regular.woff2') format('woff2'),
-		url('../fonts/Iomanoid-Regular.woff') format('woff'),
-		url('../fonts/Iomanoid-Regular.ttf') format('truetype'),
-		url('../fonts/Iomanoid-Regular.svg#Iomanoid-Regular') format('svg');
+	src: url('../resources/fonts/Iomanoid-Regular.eot');
+	src: url('../resources/fonts/Iomanoid-Regular.eot?#iefix') format('embedded-opentype'),
+		url('../resources/fonts/Iomanoid-Regular.woff2') format('woff2'),
+		url('../resources/fonts/Iomanoid-Regular.woff') format('woff'),
+		url('../resources/fonts/Iomanoid-Regular.ttf') format('truetype'),
+		url('../resources/fonts/Iomanoid-Regular.svg#Iomanoid-Regular') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
 
 body {
-  background: url("../img/background.jpg") fixed;
-  margin: 0px 10%;
+  background: url('../resources/img/background.jpg') fixed;
+  margin: 0 10%;
   color: white;
 }
 
@@ -279,8 +279,8 @@ header {
 }
 
 h1 {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 footer {
@@ -293,12 +293,12 @@ footer {
   }
 
   footer ul {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
   }
 
   footer li {
-    display: inline-block;
+    display: inline-flex;
     float: left;
   }
 
@@ -311,18 +311,18 @@ nav {
 }
 
   nav ul {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
   }
 
   nav li {
     display: inline-block;
     position: relative;
-    margin: 0px 20px;
+    margin: 0 20px;
   }
 
 section {
-  margin: 40px 0px;
+  margin: 40px 0;
   text-align: center;
 }
 
@@ -332,8 +332,8 @@ section {
 
 .fixed {
   position: fixed;
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
 }
 
 .button {
@@ -342,10 +342,10 @@ section {
 
 .button:hover, .dropdown:hover .dropdownbutton, .current {
   text-shadow:
-  	0px 0px 20px blue,
-    0px 0px 20px blue,
-    0px 0px 20px blue,
-    0px 0px 20px blue
+  	0 0 20px blue,
+    0 0 20px blue,
+    0 0 20px blue,
+    0 0 20px blue
 }
 
 
@@ -366,17 +366,17 @@ section {
 .carousel {
 		width: 480px;
 		overflow: hidden;
-    padding: 0px;
+    padding: 0;
     display: block;
-    margin: 0px auto;
+    margin: 0 auto;
     position: relative;
     z-index: 1;
 }
 
 .slides {
 	width: 1920px;
-	padding: 0px;
-  margin: 0px;
+	padding: 0;
+  margin: 0;
 }
 
 	.carousel .slides li {
@@ -388,7 +388,7 @@ section {
 
 .dots {
   text-align: center;
-  margin: 0px;
+  margin: 0;
   padding: 5px;
 }
 
@@ -402,7 +402,7 @@ section {
   cursor: pointer;
 }
 
-.dot.active {
+.active {
   background-color: white;
 }
 
@@ -435,7 +435,7 @@ path {
 }
 
   .logged ul {
-    margin: 0px;
+    margin: 0;
   }
 
   .logged ul li a{
