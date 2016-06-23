@@ -1,50 +1,3 @@
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'controllers/login.php', true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-        window.location.href=window.location.href;
-    }
-  };
-  xhr.send("email=" + profile.getEmail() + "&name=" + profile.getName());
-}
-
-function signOut() {
-  gapi.load('auth2', function() {
-   gapi.auth2.init({
-       client_id: '332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com'
-   })
-   .then(function() {
-       auth2 = gapi.auth2.getAuthInstance();
-       auth2.signOut().then(function () {
-         var xhr = new XMLHttpRequest();
-         xhr.open('POST', 'controllers/logout.php', true);
-         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-         xhr.onreadystatechange = function() {
-           if (xhr.readyState == 4) {
-             window.location.href=window.location.href;
-           }
-         };
-         xhr.send();
-       });
-   });
- });
-}
-
-function searchGame() {
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'controllers/search_game.php', true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-        return xhr.responseText;
-    }
-  };
-  xhr.send();
-}
-
 $(document).ready(function() {
 
   var SLIDEWIDTH = 480;
@@ -103,6 +56,10 @@ $(document).ready(function() {
     if($(window).width() > 600 && $('.big-menu').is(':hidden')) {
         $('.big-menu').removeAttr('style');
     }
+  });
+
+  $("#username, #password, #repeat_password").change(function(){
+    $(this).removeClass('error_input');
   });
 
   !function(d,s,id){

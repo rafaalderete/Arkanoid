@@ -17,6 +17,7 @@
   <script type="text/javascript" src="js/libs/jquery-2.2.3.min.js"></script>
   <script type="text/javascript" src="js/libs/snap.svg-min.js"></script>
   <script type="text/javascript" src="js/general.js"></script>
+  <script type="text/javascript" src="js/login_register.js"></script>
   <script type="text/javascript" src="js/onlinemultiplayer.js"></script>
 </head>
 
@@ -36,7 +37,7 @@
               </div>');
       }
       else {
-        echo('<div class="g-signin2" data-onsuccess="onSignIn"></div>');
+        echo('<a class="login" href="login.php"><img src="resources/img/login.png" alt="Login"/></a>');
       }
     ?>
   </header>

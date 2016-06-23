@@ -1,4 +1,5 @@
 <?php
+require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   define("SEARCHING", 0);
@@ -6,22 +7,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   define("MATCHED", 2);
   define("MAXLEVELS", 5);
 
-  $connection = mysqli_connect("localhost","root","","test") or die();
-
   $data = json_decode($_POST['data'], true);
   if ($data['game_status'] == MATCHING) {
-    $sql = "SELECT * FROM games_online WHERE id_game='$data[id_game]'";
-    $record = mysqli_query($connection, $sql) or die(mysqli_error($connection));
-
-    $rec = mysqli_fetch_array($record);
-    if ($rec['id_player2'] != NULL) {
-      $player_data = "$rec[id_game]_$_SESSION[id]";
-      $rival_data = "$rec[id_game]_$rec[id_player2]";
+    $table = "games_online";
+    $toSelectColumns = array("*");
+    $toWhereColumns = array("id_game");
+    $values = array($data['id_game']);
+    $game = query($table, $toSelectColumns, $toWhereColumns, $values);
+    if ($game[0]['id_player2'] != NULL) {
+      $player_data_id = "'" . $game[0]['id_game'] . $_SESSION['id'] . 'A' . "'";
+      $player_initial_data_id = "'" . $game[0]['id_game'] . $_SESSION['id'] . 'B' . "'";
+      $rival_data_id = "'" . $game[0]['id_game'] . $game[0]['id_player2'] . 'A' ."'";
+      $rival_initial_data_id = "'" . $game[0]['id_game'] . $game[0]['id_player2'] . 'B' . "'";
+      $table = "games_data";
+      $columns = array("id");
+      $values = array($player_data_id);
+      insert($table, $columns, $values);
+      $values = array($player_initial_data_id);
+      insert($table, $columns, $values);
       $response = array(
         'game_status'   => MATCHED,
-        'level' => $rec['level'],
-        'player_data' => $player_data,
-        'rival_data' => $rival_data
+        'level' => $game[0]['level'],
+        'player_data_id' => $player_data_id,
+        'player_initial_data_id' => $player_initial_data_id,
+        'rival_data_id' => $rival_data_id,
+        'rival_initial_data_id' => $rival_initial_data_id
       );
     }
     else {
@@ -34,29 +44,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   else {
     if ($data['game_status'] == SEARCHING) {
-      $sql = "SELECT * FROM games_online WHERE matched=0";
-      $records = mysqli_query($connection, $sql) or die(mysqli_error($connection));
-
-      $rows = mysqli_num_rows($records);
-      if ($rows > 0) {
+      $table = "games_online";
+      $toSelectColumns = array("*");
+      $toWhereColumns = array("matched");
+      $values = array(0);
+      $gamesNoMatched = query($table, $toSelectColumns, $toWhereColumns, $values);
+      if (sizeof($gamesNoMatched) > 0) {
+        $i = 0;
         $flag = false;
-        while($rec = mysqli_fetch_array($records)) {
-          if ( ($rec['id_player2'] == NULL) && ($rec['id_player1'] != $_SESSION['id']) ) {
+        while( ($i < sizeof($gamesNoMatched)) && !$flag) {
+          if ( ($gamesNoMatched[$i]['id_player2'] == NULL) && ($gamesNoMatched[$i]['id_player1'] != $_SESSION['id']) ) {
             $flag = true;
-            $level = $rec['level'];
-            $id_game = $rec['id_game'];
-            $player_data = "$rec[id_game]_$_SESSION[id]";
-            $rival_data = "$rec[id_game]_$rec[id_player1]";
-            $sql = "UPDATE games_online SET id_player2='$_SESSION[id]', matched=1 WHERE id_game='$rec[id_game]'";
-            mysqli_query($connection, $sql) or die(mysqli_error($connection));
+            $level = $gamesNoMatched[$i]['level'];
+            $id_game = $gamesNoMatched[$i]['id_game'];
+            $player_data_id = "'" . $gamesNoMatched[$i]['id_game'] . $_SESSION['id'] . 'A' . "'";
+            $player_initial_data_id = "'" . $gamesNoMatched[$i]['id_game'] . $_SESSION['id'] . 'B' . "'";
+            $rival_data_id = "'" . $gamesNoMatched[$i]['id_game'] . $gamesNoMatched[$i]['id_player1'] . 'A' . "'";
+            $rival_initial_data_id = "'" . $gamesNoMatched[$i]['id_game'] . $gamesNoMatched[$i]['id_player1'] . 'B' . "'";
+            $table = "games_online";
+            $toSetColumns = array("id_player2", "matched");
+            $toSetValues = array($_SESSION['id'], 1);
+            $toWhereColumns = array("id_game");
+            $toWhereValues = array($gamesNoMatched[$i]['id_game']);
+            update($table, $toSetColumns, $toSetValues, $toWhereColumns, $toWhereValues);
+            $table = "games_data";
+            $columns = array("id");
+            $values = array($player_data_id);
+            insert($table, $columns, $values);
+            $values = array($player_initial_data_id);
+            insert($table, $columns, $values);
+
           }
+          $i++;
         }
         if ($flag) {
           $response = array(
             'game_status'   => MATCHED,
             'level' => $level,
-            'player_data' => $player_data,
-            'rival_data' => $rival_data
+            'player_data_id' => $player_data_id,
+            'player_initial_data_id' => $player_initial_data_id,
+            'rival_data_id' => $rival_data_id,
+            'rival_initial_data_id' => $rival_initial_data_id
           );
         }
         else {
@@ -69,21 +97,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
       else {
         $level = rand(1, MAXLEVELS);
-        $sql = "INSERT INTO games_online (id_player1,level,matched) VALUES ('$_SESSION[id]','$level',0)";
-        mysqli_query($connection, $sql) or die(mysqli_error($connection));
-
+        $table = "games_online";
+        $columns = array("id_player1", "level", "matched");
+        $values = array($_SESSION['id'], $level, 0);
+        $lastId = insert($table, $columns, $values);
         $response = array(
           'game_status'   => MATCHING,
-          'id_game'   => mysqli_insert_id($connection)
+          'id_game'   => $lastId
         );
-
         $jsonresponse = json_encode($response);
         echo($jsonresponse);
       }
     }
   }
 
-  mysqli_close($connection);
 }
 else {
   header("location:../".$_SESSION['prev']);

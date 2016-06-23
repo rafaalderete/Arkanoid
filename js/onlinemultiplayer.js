@@ -4,7 +4,6 @@ var Key = {
 
   LEFT: 90,
   RIGHT: 88,
-  SHOOT: 83,
   START: 32,
 
   isDown: function(keyCode) {
@@ -37,7 +36,7 @@ function Bullet (x, y) {
 
   this.init = function (container) {
     bullet_svg = container.rect(this.x, this.y, this.width, this.height, 10, 10);
-    bullet_svgaddClass('bullet');
+    bullet_svg.addClass('bullet');
   };
 
   this.update = function (viewbox) {
@@ -112,7 +111,7 @@ function Barrier (y) {
     this.initBarrier1(container);
     var self = this;
     timer_barrier1 = setInterval(function() {
-      if (barrier1_svg === null) {
+      if (barrier1_svg == null) {
         self.initBarrier1(container);
       }
       else {
@@ -121,7 +120,7 @@ function Barrier (y) {
       }
     }, BARRIER_INTERVAL_TIME);
     timer_barrier2 = setInterval(function() {
-      if (barrier2_svg === null) {
+      if (barrier2_svg == null) {
         self.initBarrier2(container);
       }
       else {
@@ -135,11 +134,11 @@ function Barrier (y) {
     this.active = false;
     clearInterval(timer_barrier1);
     clearInterval(timer_barrier2);
-    if (barrier1_svg !== null) {
+    if (barrier1_svg != null) {
       barrier1_svg.remove();
       barrier1_svg = null;
     }
-    if (barrier2_svg !== null) {
+    if (barrier2_svg != null) {
       barrier2_svg.remove();
       barrier2_svg = null;
     }
@@ -307,9 +306,6 @@ function Paddle(viewbox) {
         if (Key.isDown(Key.RIGHT)){
           this.moveRight(viewbox);
         }
-        if (Key.isDown(Key.SHOOT)) {
-          this.shoot(container);
-        }
       }
     }
     for (i = 0; i < this.bullets.length; i++) {
@@ -334,27 +330,32 @@ function Paddle(viewbox) {
 
 }
 
-function Ball(cx, cy, speed) {
+function Ball(cx, cy, speed, multi1, multi2) {
 
   var BALL_RADIUS = 4;
-  var BALL_SPEED = 3;
   var INCREMENT_SPEED = 0.15;
-  var INCREMENT_TIME = 4000;
+  var INCREMENT_TIME = 20000;
 
 	this.cx = cx;
 	this.cy = cy - BALL_RADIUS;
 	this.radius = BALL_RADIUS;
-  if (Math.random() < 0.5) {
-    this.speed_x = -speed;
+  if (multi1 || multi2) {
+    if (multi1) {
+      this.speed_x = -speed;
+    }
+    else {
+      this.speed_x = speed;
+    }
+    this.speed_y = -speed * 1.2;
   }
   else {
-    this.speed_x = speed;
-  }
-  if (speed == BALL_SPEED){
+    if (Math.random() < 0.5) {
+      this.speed_x = -speed;
+    }
+    else {
+      this.speed_x = speed;
+    }
     this.speed_y = -speed;
-  }
-  else {
-    this.speed_y = Math.random() * -speed - 1;
   }
   this.total_speed = speed;
   this.touch_bottom = false;
@@ -415,107 +416,18 @@ function Ball(cx, cy, speed) {
 
 }
 
-function Brick(x, y, type) {
-
-  var BRICK_WIDTH = 40;
-  var BRICK_HEIGHT = 15;
-  var BLINK_TIME = 100;
-
-	this.x = x;
-	this.y = y;
-  this.width = BRICK_WIDTH;
-  this.height = BRICK_HEIGHT;
-  this.type = type;
-  if (type == 1) {
-    this.hits = 1;
-  }
-  else {
-    if (type == 2) {
-      this.hits = 2;
-    }
-    else {
-      this.hits = 0;
-    }
-  }
-  var damaged = false;
-  var brick_svg;
-  var damage_svg;
-
-  this.init = function(container) {
-    var inner_colours = ['innerbricktype1_1', 'innerbricktype1_2', 'innerbricktype1_3', 'innerbricktype1_4', 'innerbricktype1_5', 'innerbricktype1_6'];
-    var border_colours = ['borderbricktype1_1', 'borderbricktype1_2', 'borderbricktype1_3', 'borderbricktype1_4', 'borderbricktype1_5', 'borderbricktype1_6'];
-    var border_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
-    var inner_svg = container.rect(this.x + 3, this.y + 3, BRICK_WIDTH - 6, BRICK_HEIGHT - 6);
-    if (this.type == 1){
-      var rnd = Math.floor((Math.random() * inner_colours.length));
-      border_svg.addClass(border_colours[rnd]);
-      inner_svg.addClass(inner_colours[rnd]);
-    }
-    else {
-      if (this.type == 2) {
-        border_svg.addClass('borderbricktype2');
-        inner_svg.addClass('innerbricktype2');
-      }
-      else {
-        border_svg.addClass('borderbricktype3');
-        inner_svg.addClass('innerbricktype3');
-      }
-    }
-    brick_svg = container.group(border_svg, inner_svg);
-  };
-
-  this.hit = function (container) {
-    if ( (this.type == 1) && (this.hits > 0) ) {
-      this.hits--;
-    }
-    else {
-      if ( (this.type == 2) && (this.hits > 0) ) {
-        this.hits--;
-        if (!damaged) {
-          damaged = true;
-          damage_svg = container.polyline(this.x, this.y, this.x+10, this.y+10, this.x+15, this.y+5,
-            this.x+20, this.y+10, this.x+25, this.y+2, this.x+38, this.y+11);
-          damage_svg.addClass('damagebrick');
-        }
-      }
-      else {
-        if (this.type === 0) {
-          var blink_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
-          blink_svg.addClass('blinkbrick');
-          setTimeout(function(){
-            blink_svg.remove();
-          }, BLINK_TIME);
-        }
-      }
-    }
-  };
-
-  this.remove = function() {
-    brick_svg.remove();
-  };
-
-  this.draw = function() {
-    if ( (this.hits === 0) && (this.type !== 0)) {
-      brick_svg.remove();
-      if (damage_svg != null) {
-        damage_svg.remove();
-      }
-    }
-  };
-
-}
-
-function PickUp (x, y, active_type) {
+function PickUp (x, y, type) {
 
   var PICKUP_WIDTH = 40;
   var PICKUP_HEIGHT = 15;
   var PICKUP_SPEED = 2;
   var MESSAGE_TIME = 2000;
+  var PICKUP_TYPES = ["A", "B", "D", "E", "F", "H", "I", "J"];
   var B_TIME = 15000;
   var C_TIME = 8000;
-  var D_TIME = 10000;
-  var I_TIME = 8000;
-  var J_TIME = 700;
+  var D_TIME = 12000;
+  var I_TIME = 5000;
+  var J_TIME = 400;
 
   this.x = x;
   this.y = y;
@@ -525,21 +437,13 @@ function PickUp (x, y, active_type) {
   this.touch_bottom = false;
   this.ended = false;
   this.active = false;
-  var rnd;
-  var all_types = ["A", "B", "C", "D", "E", "F", "H", "I", "J"];
-  if (active_type == "NONE") {
-    rnd = Math.floor(Math.random() * all_types.length);
-    this.type = all_types[rnd];
+  this.type;
+  if (type == null) {
+    var rnd = Math.floor(Math.random() * PICKUP_TYPES.length);
+    this.type = PICKUP_TYPES[rnd];
   }
   else {
-    var types = [];
-    for (i = 0; i < all_types.length; i++) {
-      if (active_type != all_types[i]) {
-        types.push(all_types[i]);
-      }
-    }
-    rnd = Math.floor(Math.random() * types.length);
-    this.type = types[rnd];
+    this.type = type;
   }
   var pickup_svg;
   var letter_svg;
@@ -614,8 +518,8 @@ function PickUp (x, y, active_type) {
   this.effect = function(player, rival) {
     switch (this.type) {
       case "A": if (!this.active) {
-                  player.balls[1] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed);
-                  player.balls[2] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed);
+        player.balls[1] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed, true, false);
+        player.balls[2] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed, false, true);
                   player.balls[1].init(player.container);
                   player.balls[2].init(player.container);
                   this.active = true;
@@ -694,13 +598,13 @@ function PickUp (x, y, active_type) {
 
       case "I": if (!this.active) {
                   this.active = true;
-                  if (rival.pickup_active !== null) {
+                  if (rival.pickup_active != null) {
                     if (!rival.pickup_active.ended) {
                       rival.pickup_active.endEffect(rival.balls, rival.paddle, rival);
                     }
                   }
                   rival.pickup_active = null;
-                  if (rival.pickup !== null) {
+                  if (rival.pickup != null) {
                     if (rival.pickup_floating) {
                       rival.pickup.remove();
                       rival.pickup_floating = false;
@@ -823,11 +727,111 @@ function PickUp (x, y, active_type) {
 
 }
 
+function Brick(id, x, y, type) {
+
+  var BRICK_WIDTH = 40;
+  var BRICK_HEIGHT = 15;
+  var BLINK_TIME = 100;
+  var PICKUP_PROB = 0.4;
+
+  this.x = x;
+	this.y = y;
+  this.width = BRICK_WIDTH;
+  this.height = BRICK_HEIGHT;
+  this.type = type;
+  this.pickup = null;
+  if (type == 1) {
+    this.hits = 1;
+  }
+  else {
+    if (type == 2) {
+      this.hits = 2;
+    }
+    else {
+      this.hits = 0;
+    }
+  }
+  if (id === 0) {
+    if ( (type == 1) || (type == 2) ) {
+      var rnd = Math.random();
+      if (rnd < PICKUP_PROB) {
+        this.pickup = new PickUp(x, y);
+      }
+    }
+  }
+  var damaged = false;
+  var brick_svg;
+  var damage_svg;
+
+  this.init = function(container) {
+    var inner_colours = ['innerbricktype1_1', 'innerbricktype1_2', 'innerbricktype1_3', 'innerbricktype1_4', 'innerbricktype1_5', 'innerbricktype1_6'];
+    var border_colours = ['borderbricktype1_1', 'borderbricktype1_2', 'borderbricktype1_3', 'borderbricktype1_4', 'borderbricktype1_5', 'borderbricktype1_6'];
+    var border_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
+    var inner_svg = container.rect(this.x + 3, this.y + 3, BRICK_WIDTH - 6, BRICK_HEIGHT - 6);
+    if (this.type == 1){
+      var rnd = Math.floor((Math.random() * inner_colours.length));
+      border_svg.addClass(border_colours[rnd]);
+      inner_svg.addClass(inner_colours[rnd]);
+    }
+    else {
+      if (this.type == 2) {
+        border_svg.addClass('borderbricktype2');
+        inner_svg.addClass('innerbricktype2');
+      }
+      else {
+        border_svg.addClass('borderbricktype3');
+        inner_svg.addClass('innerbricktype3');
+      }
+    }
+    brick_svg = container.group(border_svg, inner_svg);
+  };
+
+  this.hit = function (container) {
+    if ( (this.type == 1) && (this.hits > 0) ) {
+      this.hits--;
+    }
+    else {
+      if ( (this.type == 2) && (this.hits > 0) ) {
+        this.hits--;
+        if (!damaged) {
+          damaged = true;
+          damage_svg = container.polyline(this.x, this.y, this.x+10, this.y+10, this.x+15, this.y+5,
+            this.x+20, this.y+10, this.x+25, this.y+2, this.x+38, this.y+11);
+          damage_svg.addClass('damagebrick');
+        }
+      }
+      else {
+        if (this.type === 0) {
+          var blink_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
+          blink_svg.addClass('blinkbrick');
+          setTimeout(function(){
+            blink_svg.remove();
+          }, BLINK_TIME);
+        }
+      }
+    }
+  };
+
+  this.remove = function() {
+    brick_svg.remove();
+  };
+
+  this.draw = function() {
+    if ( (this.hits === 0) && (this.type !== 0)) {
+      brick_svg.remove();
+      if (damage_svg != null) {
+        damage_svg.remove();
+      }
+    }
+  };
+
+}
+
 function Player (id, lifes, container) {
 
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
-  var BALL_SPEED = 3;
+  var BALL_SPEED = 2;
   var BRICK_PADDING_Y = 25;
   var PICKUP_PROB = 0.3;
   var BRICKS_LVL1 = 65;
@@ -843,6 +847,7 @@ function Player (id, lifes, container) {
   this.id = id;
   this.paddle = new Paddle(this.viewbox);
   this.balls = [new Ball(this.paddle.x + this.paddle.width/2, this.paddle.y, BALL_SPEED)];
+  this.ball_sync = false;
   this.bricks = [];
   this.pickup;
   this.pickup_active;
@@ -862,10 +867,10 @@ function Player (id, lifes, container) {
       case 1: brick_y = 50;
               for (i = 0; i < BRICKS_LVL1; i++) {
                 if (row === 0) {
-                  this.bricks[i] = new Brick(brick_x, brick_y, 2);
+                  this.bricks[i] = new Brick(this.id, brick_x, brick_y, 2);
                 }
                 else {
-                  this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                  this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                 }
                 this.amount_bricks++;
                 column++;
@@ -886,14 +891,14 @@ function Player (id, lifes, container) {
               for (i = 0; i < BRICKS_LVL2; i++) {
                 if (row == 12){
                   if (column == 12){
-                    this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                    this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                   }
                   else {
-                    this.bricks[i] = new Brick(brick_x, brick_y, 2);
+                    this.bricks[i] = new Brick(this.id, brick_x, brick_y, 2);
                   }
                 }
                 else {
-                  this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                  this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                 }
                 this.amount_bricks++;
                 column++;
@@ -917,32 +922,32 @@ function Player (id, lifes, container) {
                 if ( ((row % 2) !== 0) && (row != 7) ) {
                   if ( (column >= 0) && (column < 3) ) {
                     if (first && (count < 3)) {
-                      this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                      this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                       this.amount_bricks++;
                       count++;
                     }
                     else {
-                      this.bricks[i] = new Brick(brick_x, brick_y, 0);
+                      this.bricks[i] = new Brick(this.id, brick_x, brick_y, 0);
                     }
                   }
                   else {
                     if ( (column > 9) && (column < 13) ) {
                       if (!first && (count < 3)) {
-                        this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                        this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                         this.amount_bricks++;
                         count++;
                       }
                       else {
-                        this.bricks[i] = new Brick(brick_x, brick_y, 0);
+                        this.bricks[i] = new Brick(this.id, brick_x, brick_y, 0);
                       }
                     }
                     else {
-                      this.bricks[i] = new Brick(brick_x, brick_y, 0);
+                      this.bricks[i] = new Brick(this.id, brick_x, brick_y, 0);
                     }
                   }
                 }
                 else {
-                  this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                  this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                   this.amount_bricks++;
                 }
                 column++;
@@ -972,7 +977,7 @@ function Player (id, lifes, container) {
               for (i = 0; i < BRICKS_LVL4; i++) {
                 if ( (row === 0) || (row == 10) ) {
                   if ( (column > 0) && (column < 12)){
-                    this.bricks[j] = new Brick(brick_x, brick_y, 2);
+                    this.bricks[j] = new Brick(this.id, brick_x, brick_y, 2);
                     this.amount_bricks++;
                     j++;
                   }
@@ -980,7 +985,7 @@ function Player (id, lifes, container) {
                 else {
                   if ( (row == 1) || (row == 9) ) {
                     if ( (column == 1) || (column == 11)){
-                      this.bricks[j] = new Brick(brick_x, brick_y, 2);
+                      this.bricks[j] = new Brick(this.id, brick_x, brick_y, 2);
                       this.amount_bricks++;
                       j++;
                     }
@@ -988,7 +993,7 @@ function Player (id, lifes, container) {
                   else {
                     if ( (row == 2) || (row == 8) ) {
                       if ( (column !== 0) && (column != 2) && (column != 10) && (column != 12)){
-                        this.bricks[j] = new Brick(brick_x, brick_y, 2);
+                        this.bricks[j] = new Brick(this.id, brick_x, brick_y, 2);
                         this.amount_bricks++;
                         j++;
                       }
@@ -996,7 +1001,7 @@ function Player (id, lifes, container) {
                     else {
                       if ( (row == 3) || (row == 7) ) {
                         if ( (column == 1) || (column == 3) || (column == 9) || (column == 11)){
-                          this.bricks[j] = new Brick(brick_x, brick_y, 2);
+                          this.bricks[j] = new Brick(this.id, brick_x, brick_y, 2);
                           this.amount_bricks++;
                           j++;
                         }
@@ -1004,7 +1009,7 @@ function Player (id, lifes, container) {
                       else {
                         if ( (row == 4) || (row == 6) ) {
                           if ( (column !== 0) && (column != 2) && (column != 4) && (column != 8) && (column != 10) && (column != 12)){
-                            this.bricks[j] = new Brick(brick_x, brick_y, 2);
+                            this.bricks[j] = new Brick(this.id, brick_x, brick_y, 2);
                             this.amount_bricks++;
                             j++;
                           }
@@ -1012,7 +1017,7 @@ function Player (id, lifes, container) {
                         else {
                           if (row == 5) {
                             if ( (column !== 0) && (column != 2) && (column != 4) && (column != 6) && (column != 8) && (column != 10) && (column != 12)){
-                              this.bricks[j] = new Brick(brick_x, brick_y, 2);
+                              this.bricks[j] = new Brick(this.id, brick_x, brick_y, 2);
                               this.amount_bricks++;
                               j++;
                             }
@@ -1039,20 +1044,20 @@ function Player (id, lifes, container) {
               for (i = 0; i < BRICKS_LVL5; i++) {
                 if (row == 5){
                   if ( (column > 2) && (column < 10)){
-                    this.bricks[i] = new Brick(brick_x, brick_y, 0);
+                    this.bricks[i] = new Brick(this.id, brick_x, brick_y, 0);
                   }
                   else {
-                    this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                    this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                     this.amount_bricks++;
                   }
                 }
                 else {
                   if ( (row === 0) || (row == 10) ){
-                    this.bricks[i] = new Brick(brick_x, brick_y, 2);
+                    this.bricks[i] = new Brick(this.id, brick_x, brick_y, 2);
                     this.amount_bricks++;
                   }
                   else {
-                    this.bricks[i] = new Brick(brick_x, brick_y, 1);
+                    this.bricks[i] = new Brick(this.id, brick_x, brick_y, 1);
                     this.amount_bricks++;
                   }
                 }
@@ -1103,32 +1108,19 @@ function Player (id, lifes, container) {
     }
   };
 
-  this.addPickUp = function(x, y) {
+  this.addPickUp = function(brick_pickup) {
     var rnd;
-    if (!this.pickup_floating  && !this.pickup_blocked) {
-      rnd = Math.random();
-      if (rnd < PICKUP_PROB) {
-        if (this.pickup_active != null) {
-          if (this.pickup_active.type != "A") {
-            if (this.pickup_active.ended) {
-              this.pickup = new PickUp(x, y, 'NONE');
-            }
-            else {
-              this.pickup = new PickUp(x, y, this.pickup_active.type);
-            }
-          }
-          else{
-            if (this.pickup_active.ended) {
-              this.pickup = new PickUp(x, y, 'NONE');
-            }
-          }
+    if (!this.pickup_floating) {
+      if (this.pickup_active != null) {
+        if ( ((this.pickup_active.type != "A") && (brick_pickup.type != this.pickup_active.type)) || (this.pickup_active.ended) ) {
+          this.pickup = brick_pickup;
         }
-        else {
-          this.pickup = new PickUp(x, y, 'NONE');
-        }
-        this.pickup.init(this.container);
-        this.pickup_floating = true;
       }
+      else {
+        this.pickup = brick_pickup;
+      }
+      this.pickup.init(this.container);
+      this.pickup_floating = true;
     }
   };
 
@@ -1188,6 +1180,7 @@ function Player (id, lifes, container) {
                 }
               }
             }
+            this.ball_sync = true;
             hit_paddle = true;
           }
           //Colision con los costados del Paddle.
@@ -1240,7 +1233,9 @@ function Player (id, lifes, container) {
         }
         if (remove_brick) {
           this.amount_bricks--;
-          this.addPickUp(this.bricks[i].x, this.bricks[i].y);
+          if (this.bricks[i].pickup != null) {
+            this.addPickUp(this.bricks[i].pickup);
+          }
         }
       }
     }
@@ -1256,7 +1251,7 @@ function Player (id, lifes, container) {
         if ( ((pickup_x > this.paddle.x) && (pickup_x < this.paddle.x + this.paddle.width)) || ((pickup_x2 < this.paddle.x + this.paddle.width) && (pickup_x2 > this.paddle.x)) ) {
           this.pickup.touch_bottom = true;
           this.pickup_floating = false;
-          if (this.pickup_active !== null) {
+          if (this.pickup_active != null) {
             this.pickup_active.endEffect(this.balls, this.paddle, rival);
           }
           this.pickup_active = this.pickup;
@@ -1289,7 +1284,9 @@ function Player (id, lifes, container) {
           }
           if (remove_brick) {
             this.amount_bricks--;
-            this.addPickUp(this.bricks[j].x, this.bricks[j].y);
+            if (this.bricks[j].pickup != null) {
+              this.addPickUp(this.bricks[j].pickup);
+            }
           }
         }
       }
@@ -1344,9 +1341,12 @@ function Arkanoid() {
 
   this.game_matched = false;
   this.game_status = SEARCHING;
-  this.id_game;
-  this.player_data;
-  this.rival_data;
+  this.id_game = "";
+  this.player_data_id = "";
+  this.rival_data_id = "";
+  this.player_initial_data_id = "";
+  this.rival_initial_data_id = "";
+  this.game_abandon = false;
   this.level;
   var players = [new Player (0, 1, Snap("#container1")), new Player (1, 1, Snap("#container2"))];
   var game_started1 = false;
@@ -1356,6 +1356,9 @@ function Arkanoid() {
   var background_start_player2_svg;
   var ready1_svg;
   var ready2_svg;
+  var abandon_svg;
+  var initial_data_received = false;
+  var ball_sync_received = false;
 
   function checkPlayersLoseLife() {
     if (players[0].checkLoseLife()) {
@@ -1390,15 +1393,31 @@ function Arkanoid() {
     lose2_svg.addClass('levelmessage');
   }
 
+  function gameEnded() {
+    if ( (players[0].lifes === 0) || (players[1].lifes === 0) ) {
+      return true;
+    }
+    else {
+      if ( (players[0].amount_bricks === 0) || (players[1].amount_bricks === 0) ) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+  }
+
   this.checkGameOver = function() {
     if ( (players[0].lifes === 0) || (players[1].lifes === 0) ) {
       if ( (players[0].lifes === 0) ) {
           loseMessage(players[0].container, players[0].viewbox);
           winMessage(players[1].container, players[1].viewbox);
+          this.sendGameResult("LOSE");
       }
       else {
         loseMessage(players[1].container, players[1].viewbox);
         winMessage(players[0].container, players[0].viewbox);
+        this.sendGameResult("WIN");
       }
       return true;
     }
@@ -1407,10 +1426,12 @@ function Arkanoid() {
         if ( (players[0].amount_bricks === 0) ) {
             loseMessage(players[1].container, players[1].viewbox);
             winMessage(players[0].container, players[0].viewbox);
+            this.sendGameResult("WIN");
         }
         else {
           loseMessage(players[0].container, players[0].viewbox);
           winMessage(players[1].container, players[1].viewbox);
+          this.sendGameResult("LOSE");
         }
         return true;
       }
@@ -1432,18 +1453,26 @@ function Arkanoid() {
     var controls1_svg = players[0].container.text(players[0].viewbox.width/2 - 40, players[0].viewbox.height/2 - 50, "Controls:");
     var controls2_svg = players[0].container.text(players[0].viewbox.width/2 - 55, players[0].viewbox.height/2 - 25, "Z: Move Left");
     var controls3_svg = players[0].container.text(players[0].viewbox.width/2 - 55, players[0].viewbox.height/2 - 5, "X: Move Right");
-    var controls4_svg = players[0].container.text(players[0].viewbox.width/2 - 55, players[0].viewbox.height/2 + 15, "S: Shoot");
-    var controls5_svg = players[0].container.text(players[0].viewbox.width/2 - 90, players[0].viewbox.height/2 + 100, "Press \"Space\" to Start.");
+    var controls4_svg = players[0].container.text(players[0].viewbox.width/2 - 90, players[0].viewbox.height/2 + 100, "Press \"Space\" to Start.");
     controls1_svg.addClass('levelmessage');
     controls2_svg.addClass('levelmessage');
     controls3_svg.addClass('levelmessage');
     controls4_svg.addClass('levelmessage');
-    controls5_svg.addClass('levelmessage');
     background_start_player1_svg = players[0].container.rect(0, 0, players[0].container.attr('width'), players[0].container.attr('height'));
     background_start_player1_svg.addClass('backgroundlevel');
-    controls_player1_svg = players[0].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
+    controls_player1_svg = players[0].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg);
     background_start_player2_svg = players[1].container.rect(0, 0, players[1].container.attr('width'), players[1].container.attr('height'));
     background_start_player2_svg.addClass('backgroundlevel');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'controllers/receive_player_name.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var name_svg = players[0].container.text(3, players[0].viewbox.height - 5, xhr.responseText);
+        name_svg.addClass('lifescore');
+      }
+    };
+    xhr.send();
   };
 
   function removeMessages() {
@@ -1456,22 +1485,79 @@ function Arkanoid() {
     }
   }
 
-  this.sendData = function() {
-    var data = new Object();
-    var response;
+  this.sendGameResult = function(result) {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'controllers/send_player_data.php', true);
+    xhr.open('POST', 'controllers/send_game_result.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    data.player_data = this.player_data;
-    data.game_started = game_started1;
-    data.player_paddle = players[0].paddle;
-    data.player_balls = players[0].balls;
+    xhr.send("result=" + result);
+  };
+
+  this.deleteGame = function() {
+    if (this.game_matched) {
+      if (!gameEnded()) {
+        this.game_abandon = true;
+        this.sendData(false);
+        this.sendGameResult("LOSE");
+      }
+    }
+    var data = {};
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'controllers/delete_game.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    data.id_game = this.id_game;
+    data.player_data_id = this.player_data_id;
+    data.player_initial_data_id = this.player_initial_data_id;
     var jsondata= JSON.stringify(data);
     xhr.send("data=" + jsondata);
   };
 
-  this.receiveData = function() {
-    var data = new Object();
+  this.sendData = function (initial) {
+    var data = {};
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'controllers/send_player_data.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    data.game_started = game_started1;
+    data.game_abandon = this.game_abandon;
+    data.player_paddle_x = players[0].paddle.x;
+    data.balls_speed = players[0].balls[0].total_speed;
+    data.ball_sync = players[0].ball_sync;
+    data.ball_sync_received = ball_sync_received;
+    if (initial) {
+      data.initial = true;
+      data.player_data_id = this.player_initial_data_id;
+      data.player_balls = [];
+      for (i = 0; i < players[0].balls.length; i++) {
+        data.player_balls[i] = ({speed_x:players[0].balls[i].speed_x});
+      }
+      data.player_bricks = [];
+      for (i = 0; i < players[0].bricks.length; i++) {
+        if (players[0].bricks[i].pickup == null) {
+          data.player_bricks[i] = ({pickup_type:null});
+        }
+        else {
+          data.player_bricks[i] = ({pickup_type:players[0].bricks[i].pickup.type});
+        }
+      }
+    }
+    else {
+      data.initial = false;
+      data.player_data_id = this.player_data_id;
+      if (players[0].ball_sync) {
+        ball_sync_received = false;
+        data.player_balls = [];
+        for (i = 0; i < players[0].balls.length; i++) {
+          data.player_balls[i] = ({cx:players[0].balls[i].cx,cy:players[0].balls[i].cy,
+                speed_x:players[0].balls[i].speed_x,speed_y:players[0].balls[i].speed_y,
+                total_speed:players[0].balls[i].total_speed});
+        }
+      }
+    }
+    var jsondata= JSON.stringify(data);
+    xhr.send("data=" + jsondata);
+  };
+
+  this.receiveData = function(initial) {
+    var data = {};
     var response;
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'controllers/receive_player_data.php', true);
@@ -1480,23 +1566,63 @@ function Arkanoid() {
       if (xhr.readyState == 4 && xhr.status == 200) {
         if (xhr.responseText !== "") {
           response = JSON.parse(xhr.responseText);
-          game_started2 = response.game_started;
-          players[1].paddle.x = response.player_paddle.x;
-          for (i = 0; i < players[1].balls.length;i++) {
-            players[1].balls[i].cx = response.player_balls[i].cx;
-            players[1].balls[i].cy = response.player_balls[i].cy;
-            players[1].balls[i].touch_bottom = response.player_balls[i].touch_bottom;
+          if (response.game_abandon) {
+            players[1].lifes--;
+            if (abandon_svg == null) {
+              abandon_svg = players[1].container.text(players[1].viewbox.width/2 - 110, players[1].viewbox.height/2 + 100, "The Player has left the game!");
+              abandon_svg.addClass('levelmessage');
+            }
+          }
+          else {
+            game_started2 = response.game_started;
+            players[1].paddle.x = response.player_paddle_x;
+            for (i = 0; i < players[1].balls.length;i++) {
+              players[1].balls[i].total_speed = response.balls_speed;
+            }
+            if (initial) {
+              initial_data_received = true;
+              var name_svg = players[1].container.text(3, players[1].viewbox.height - 5, response.player_name);
+              name_svg.addClass('lifescore');
+              for (i = 0; i < players[1].balls.length;i++) {
+                players[1].balls[i].speed_x = response.player_balls[i].speed_x;
+              }
+              for (i = 0; i < players[1].bricks.length;i++) {
+                if (response.player_bricks[i].pickup_type != null) {
+                  players[1].bricks[i].pickup = new PickUp(players[1].bricks[i].x, players[1].bricks[i].y, response.player_bricks[i].pickup_type);
+                }
+              }
+            }
+            else {
+              if (response.ball_sync) {
+                ball_sync_received = true;
+                for (i = 0; i < players[1].balls.length;i++) {
+                  players[1].balls[i].cx = response.player_balls[i].cx;
+                  players[1].balls[i].cy = response.player_balls[i].cy;
+                  players[1].balls[i].speed_x = response.player_balls[i].speed_x;
+                  players[1].balls[i].speed_y = response.player_balls[i].speed_y;
+                  players[1].balls[i].total_speed = response.player_balls[i].total_speed;
+                }
+              }
+              if (response.ball_sync_received) {
+                players[0].ball_sync = false;
+              }
+            }
           }
         }
       }
     };
-    data.rival_data = this.rival_data;
+    if (initial) {
+      data.rival_data_id = this.rival_initial_data_id;
+    }
+    else {
+      data.rival_data_id = this.rival_data_id;
+    }
     var jsondata= JSON.stringify(data);
     xhr.send("data=" + jsondata);
   };
 
   this.searchGame = function(game) {
-    var data = new Object();
+    var data = {};
     var response;
     var xhr = new XMLHttpRequest();
     xhr.open('POST', 'controllers/search_game.php', true);
@@ -1515,11 +1641,13 @@ function Arkanoid() {
           if (response.game_status == MATCHED) {
             game.game_status = response.game_status;
             game.level = Number(response.level);
-            game.player_data = response.player_data;
-            game.rival_data = response.rival_data;
+            game.player_data_id = response.player_data_id;
+            game.player_initial_data_id = response.player_initial_data_id;
+            game.rival_data_id = response.rival_data_id;
+            game.rival_initial_data_id = response.rival_initial_data_id;
             game.game_matched = true;
-            game.sendData();
             game.init();
+            game.sendData(true);
           }
         }
       }
@@ -1533,7 +1661,12 @@ function Arkanoid() {
   };
 
   this.run = function() {
-    this.receiveData();
+    if (!initial_data_received) {
+      this.receiveData(true);
+    }
+    else {
+      this.receiveData(false);
+    }
     if (game_started1 && game_started2) {
       removeMessages();
       update();
@@ -1555,7 +1688,7 @@ function Arkanoid() {
         }
       }
     }
-    this.sendData();
+    this.sendData(false);
   };
 
 }
@@ -1563,7 +1696,7 @@ function Arkanoid() {
 //Main.
 $(document).ready(function() {
   var elementExists = document.getElementById("container1");
-  if (elementExists !== null) {
+  if (elementExists != null) {
     window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
     window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
 
@@ -1573,9 +1706,14 @@ $(document).ready(function() {
       if (game.game_matched) {
         game.run();
         if (game.checkGameOver()){
+          game.deleteGame();
           clearInterval(loop);
         }
       }
     }, 1000/30);
+
+    window.onbeforeunload = function(){
+        game.deleteGame();
+    };
   }
 });

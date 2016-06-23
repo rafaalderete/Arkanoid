@@ -1,12 +1,3 @@
-<?php
-  require('controllers/mysql.php');
-  session_start();
-  $_SESSION['prev'] = "topscores_singleplayer.php";
-
-  $scores = topScoresSingle();
-  
-?>
-
 <!DOCTYPE html>
 <html>
 
@@ -14,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="google-signin-client_id" content="332020513166-urs8iui38gd74512o7dcjglsb9u23cij.apps.googleusercontent.com">
-  <title>Arkanoid | Top Scores Singleplayer</title>
+  <title>Arkanoid | Home</title>
   <link href="css/general.css" rel="stylesheet" />
   <script src="https://apis.google.com/js/platform.js" async defer></script>
   <script type="text/javascript" src="js/libs/jquery-2.2.3.min.js"></script>
@@ -29,65 +20,24 @@
       <span class="title">Arkanoid</span>
       <a href="index.php"><img class="logo" src="resources/img/logo.png" alt="Arkanoid"/></a>
     </h1>
-    <?php
-      if (isset($_SESSION['name']) && $_SESSION['name']) {
-        echo('<div class ="dropdown logged">
-                <span class="dropdownbutton button">'.$_SESSION['name'].'</span>
-                <ul class="dropdown-content">
-                  <li><a class="button" onclick=signOut();>Log out</a></li>
-                </ul>
-              </div>');
-      }
-      else {
-        echo('<a class="login" href="login.php"><img src="resources/img/login.png" alt="Login"/></a>');
-      }
-    ?>
   </header>
 
-  <nav>
-    <ul class="small-menu">
-      <li>Menu</li>
-      <li>☰</li>
-    </ul>
-    <ul class="big-menu">
-      <li><a class="dropdownbutton button" href="index.php">Home</a></li>
-      <li class ="dropdown">
-        <span class="dropdownbutton button">Play</span>
-        <ul class="dropdown-content">
-          <li><a class="button" href="play_singleplayer.php">Single Player</a></li>
-          <li><a class="button" href="play_localmultiplayer.php">Local Multiplayer</a></li>
-          <li><a class="button" href="play_onlinemultiplayer.php">Online Multiplayer</a></li>
-        </ul>
-      </li>
-      <li class ="dropdown">
-        <span class="dropdownbutton button current">Top-Scores</span>
-        <ul class="dropdown-content">
-          <li><span class="button current">Single Player</span></li>
-          <li><a class="button" href="topscores_multiplayer.php">Multiplayer</a></li>
-        </ul>
-      </li>
-      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
-    </ul>
-  </nav>
-
   <section>
-    <div class="row">
-      <div class="col-4 headergrid">N°</div>
-      <div class="col-4 headergrid">Name</div>
-      <div class="col-4 headergrid">Score</div>
-    </div>
-      <?php
-        $i = 1;
-        foreach ($scores as $sc){
-          echo('<div class="row">
-                  <div class="col-4 innergrid">'.$i.'</div>
-                  <div class="col-4 innergrid">'.$sc['name'].'</div>
-                  <div class="col-4 innergrid">'.$sc['score'].'</div>
-                </div>');
-          $i++;
-        }
-      ?>
+    <form>
+      <p id="error_general"></p>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" placeholder="Username" required>
+      <p id="error_username"></p>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="*********" required>
+      <p id="error_password"></p>
+      <label for="repeat_password">Repeat Password:</label>
+      <input type="password" id="repeat_password" name="repeat_password" placeholder="*********" required>
+      <p id="error_repeat_password"></p>
+      <input class="submit_button" type="button" value="Register" onclick=register() />
+    </form>
   </section>
+
 
   <footer>
       <ul>
@@ -109,7 +59,7 @@
           </a>
         </li>
         <li>
-          <a href="">
+          <a href="https://twitter.com/Arkanoid_Online">
             <svg class="svg-twitter" width="30px" height="30px" viewBox="0 0 30 30.0009">
               <path id="twitter" fill="white" d="M30 3.55135c-1.10288,0.60326 -2.28991,1.00986 -3.53452,1.19323
               1.2703,-0.937223 2.2465,-2.4219 2.70625,-4.19004 -1.18969,0.868127 -2.50694,1.49796
@@ -134,5 +84,4 @@
     </p>
   </footer>
 </body>
-
 </html>

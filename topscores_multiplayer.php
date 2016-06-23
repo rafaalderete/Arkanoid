@@ -1,6 +1,9 @@
 <?php
+  require('controllers/mysql.php');
   session_start();
   $_SESSION['prev'] = "topscores_multiplayer.php";
+
+  $scores = topScoresMulti();
 ?>
 
 <!DOCTYPE html>
@@ -16,6 +19,7 @@
   <script type="text/javascript" src="js/libs/jquery-2.2.3.min.js"></script>
   <script type="text/javascript" src="js/libs/snap.svg-min.js"></script>
   <script type="text/javascript" src="js/general.js"></script>
+  <script type="text/javascript" src="js/login_register.js"></script>
 </head>
 
 <body>
@@ -34,7 +38,7 @@
               </div>');
       }
       else {
-        echo('<div class="g-signin2" data-onsuccess="onSignIn"></div>');
+        echo('<a class="login" href="login.php"><img src="resources/img/login.png" alt="Login"/></a>');
       }
     ?>
   </header>
@@ -66,6 +70,24 @@
   </nav>
 
   <section>
+    <div class="row">
+      <div class="col-3 headergrid">N°</div>
+      <div class="col-3 headergrid">Name</div>
+      <div class="col-3 headergrid">Win</div>
+      <div class="col-3 headergrid">Lose</div>
+    </div>
+      <?php
+        $i = 1;
+        foreach ($scores as $sc){
+          echo('<div class="row">
+                  <div class="col-3 innergrid">'.$i.'</div>
+                  <div class="col-3 innergrid">'.$sc['name'].'</div>
+                  <div class="col-3 innergrid">'.$sc['win'].'</div>
+                  <div class="col-3 innergrid">'.$sc['lose'].'</div>
+                </div>');
+          $i++;
+        }
+      ?>
   </section>
 
   <footer>

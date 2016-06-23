@@ -4,12 +4,10 @@ var Key = {
 
   LEFT1: 90,
   RIGHT1: 88,
-  SHOOT1: 83,
   START1: 32,
   START2: 13,
   LEFT2: 37,
   RIGHT2: 39,
-  SHOOT2: 38,
 
   isDown: function(keyCode) {
     return this.pressed[keyCode];
@@ -41,7 +39,7 @@ function Bullet (x, y) {
 
   this.init = function (container) {
     bullet_svg = container.rect(this.x, this.y, this.width, this.height, 10, 10);
-    bullet_svgaddClass('bullet');
+    bullet_svg.addClass('bullet');
   };
 
   this.update = function (viewbox) {
@@ -116,7 +114,7 @@ function Barrier (y) {
     this.initBarrier1(container);
     var self = this;
     timer_barrier1 = setInterval(function() {
-      if (barrier1_svg === null) {
+      if (barrier1_svg == null) {
         self.initBarrier1(container);
       }
       else {
@@ -125,7 +123,7 @@ function Barrier (y) {
       }
     }, BARRIER_INTERVAL_TIME);
     timer_barrier2 = setInterval(function() {
-      if (barrier2_svg === null) {
+      if (barrier2_svg == null) {
         self.initBarrier2(container);
       }
       else {
@@ -139,11 +137,11 @@ function Barrier (y) {
     this.active = false;
     clearInterval(timer_barrier1);
     clearInterval(timer_barrier2);
-    if (barrier1_svg !== null) {
+    if (barrier1_svg != null) {
       barrier1_svg.remove();
       barrier1_svg = null;
     }
-    if (barrier2_svg !== null) {
+    if (barrier2_svg != null) {
       barrier2_svg.remove();
       barrier2_svg = null;
     }
@@ -311,9 +309,6 @@ function Paddle(viewbox) {
         if (Key.isDown(Key.RIGHT1)){
           this.moveRight(viewbox);
         }
-        if (Key.isDown(Key.SHOOT1)) {
-          this.shoot(container);
-        }
       }
       else {
         if (Key.isDown(Key.LEFT2)){
@@ -321,9 +316,6 @@ function Paddle(viewbox) {
         }
         if (Key.isDown(Key.RIGHT2)){
           this.moveRight(viewbox);
-        }
-        if (Key.isDown(Key.SHOOT2)) {
-          this.shoot(container);
         }
       }
     }
@@ -349,7 +341,7 @@ function Paddle(viewbox) {
 
 }
 
-function Ball(cx, cy, speed) {
+function Ball(cx, cy, speed, multi1, multi2) {
 
   var BALL_RADIUS = 4;
   var BALL_SPEED = 3;
@@ -359,17 +351,23 @@ function Ball(cx, cy, speed) {
 	this.cx = cx;
 	this.cy = cy - BALL_RADIUS;
 	this.radius = BALL_RADIUS;
-  if (Math.random() < 0.5) {
-    this.speed_x = -speed;
+  if (multi1 || multi2) {
+    if (multi1) {
+      this.speed_x = -speed;
+    }
+    else {
+      this.speed_x = speed;
+    }
+    this.speed_y = -speed * 1.2;
   }
   else {
-    this.speed_x = speed;
-  }
-  if (speed == BALL_SPEED){
+    if (Math.random() < 0.5) {
+      this.speed_x = -speed;
+    }
+    else {
+      this.speed_x = speed;
+    }
     this.speed_y = -speed;
-  }
-  else {
-    this.speed_y = Math.random() * -speed - 1;
   }
   this.total_speed = speed;
   this.touch_bottom = false;
@@ -430,107 +428,18 @@ function Ball(cx, cy, speed) {
 
 }
 
-function Brick(x, y, type) {
-
-  var BRICK_WIDTH = 40;
-  var BRICK_HEIGHT = 15;
-  var BLINK_TIME = 100;
-
-	this.x = x;
-	this.y = y;
-  this.width = BRICK_WIDTH;
-  this.height = BRICK_HEIGHT;
-  this.type = type;
-  if (type == 1) {
-    this.hits = 1;
-  }
-  else {
-    if (type == 2) {
-      this.hits = 2;
-    }
-    else {
-      this.hits = 0;
-    }
-  }
-  var damaged = false;
-  var brick_svg;
-  var damage_svg;
-
-  this.init = function(container) {
-    var inner_colours = ['innerbricktype1_1', 'innerbricktype1_2', 'innerbricktype1_3', 'innerbricktype1_4', 'innerbricktype1_5', 'innerbricktype1_6'];
-    var border_colours = ['borderbricktype1_1', 'borderbricktype1_2', 'borderbricktype1_3', 'borderbricktype1_4', 'borderbricktype1_5', 'borderbricktype1_6'];
-    var border_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
-    var inner_svg = container.rect(this.x + 3, this.y + 3, BRICK_WIDTH - 6, BRICK_HEIGHT - 6);
-    if (this.type == 1){
-      var rnd = Math.floor((Math.random() * inner_colours.length));
-      border_svg.addClass(border_colours[rnd]);
-      inner_svg.addClass(inner_colours[rnd]);
-    }
-    else {
-      if (this.type == 2) {
-        border_svg.addClass('borderbricktype2');
-        inner_svg.addClass('innerbricktype2');
-      }
-      else {
-        border_svg.addClass('borderbricktype3');
-        inner_svg.addClass('innerbricktype3');
-      }
-    }
-    brick_svg = container.group(border_svg, inner_svg);
-  };
-
-  this.hit = function (container) {
-    if ( (this.type == 1) && (this.hits > 0) ) {
-      this.hits--;
-    }
-    else {
-      if ( (this.type == 2) && (this.hits > 0) ) {
-        this.hits--;
-        if (!damaged) {
-          damaged = true;
-          damage_svg = container.polyline(this.x, this.y, this.x+10, this.y+10, this.x+15, this.y+5,
-            this.x+20, this.y+10, this.x+25, this.y+2, this.x+38, this.y+11);
-          damage_svg.addClass('damagebrick');
-        }
-      }
-      else {
-        if (this.type === 0) {
-          var blink_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
-          blink_svg.addClass('blinkbrick');
-          setTimeout(function(){
-            blink_svg.remove();
-          }, BLINK_TIME);
-        }
-      }
-    }
-  };
-
-  this.remove = function() {
-    brick_svg.remove();
-  };
-
-  this.draw = function() {
-    if ( (this.hits === 0) && (this.type !== 0)) {
-      brick_svg.remove();
-      if (damage_svg != null) {
-        damage_svg.remove();
-      }
-    }
-  };
-
-}
-
-function PickUp (x, y, active_type) {
+function PickUp (x, y) {
 
   var PICKUP_WIDTH = 40;
   var PICKUP_HEIGHT = 15;
   var PICKUP_SPEED = 2;
   var MESSAGE_TIME = 2000;
+  var PICKUP_TYPES = ["A", "B", "D", "E", "F", "H", "I", "J"];
   var B_TIME = 15000;
   var C_TIME = 8000;
-  var D_TIME = 10000;
-  var I_TIME = 8000;
-  var J_TIME = 700;
+  var D_TIME = 12000;
+  var I_TIME = 5000;
+  var J_TIME = 400;
 
   this.x = x;
   this.y = y;
@@ -540,22 +449,8 @@ function PickUp (x, y, active_type) {
   this.touch_bottom = false;
   this.ended = false;
   this.active = false;
-  var rnd;
-  var all_types = ["A", "B", "C", "D", "E", "F", "H", "I", "J"];
-  if (active_type == "NONE") {
-    rnd = Math.floor(Math.random() * all_types.length);
-    this.type = all_types[rnd];
-  }
-  else {
-    var types = [];
-    for (i = 0; i < all_types.length; i++) {
-      if (active_type != all_types[i]) {
-        types.push(all_types[i]);
-      }
-    }
-    rnd = Math.floor(Math.random() * types.length);
-    this.type = types[rnd];
-  }
+  var rnd = Math.floor(Math.random() * PICKUP_TYPES.length);
+  this.type = PICKUP_TYPES[rnd];
   var pickup_svg;
   var letter_svg;
   var message_svg;
@@ -629,8 +524,8 @@ function PickUp (x, y, active_type) {
   this.effect = function(player, rival) {
     switch (this.type) {
       case "A": if (!this.active) {
-                  player.balls[1] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed);
-                  player.balls[2] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed);
+        player.balls[1] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed, true, false);
+        player.balls[2] = new Ball (player.balls[0].cx, player.balls[0].cy, player.balls[0].total_speed, false, true);
                   player.balls[1].init(player.container);
                   player.balls[2].init(player.container);
                   this.active = true;
@@ -709,13 +604,13 @@ function PickUp (x, y, active_type) {
 
       case "I": if (!this.active) {
                   this.active = true;
-                  if (rival.pickup_active !== null) {
+                  if (rival.pickup_active != null) {
                     if (!rival.pickup_active.ended) {
                       rival.pickup_active.endEffect(rival.balls, rival.paddle, rival);
                     }
                   }
                   rival.pickup_active = null;
-                  if (rival.pickup !== null) {
+                  if (rival.pickup != null) {
                     if (rival.pickup_floating) {
                       rival.pickup.remove();
                       rival.pickup_floating = false;
@@ -838,13 +733,109 @@ function PickUp (x, y, active_type) {
 
 }
 
+function Brick(x, y, type) {
+
+  var BRICK_WIDTH = 40;
+  var BRICK_HEIGHT = 15;
+  var BLINK_TIME = 100;
+  var PICKUP_PROB = 0.4;
+
+	this.x = x;
+	this.y = y;
+  this.width = BRICK_WIDTH;
+  this.height = BRICK_HEIGHT;
+  this.type = type;
+  if (type == 1) {
+    this.hits = 1;
+  }
+  else {
+    if (type == 2) {
+      this.hits = 2;
+    }
+    else {
+      this.hits = 0;
+    }
+  }
+  if ( (type == 1) || (type == 2) ) {
+    var rnd = Math.random();
+    if (rnd < PICKUP_PROB) {
+      this.pickup = new PickUp(x, y);
+    }
+  }
+  var damaged = false;
+  var brick_svg;
+  var damage_svg;
+
+  this.init = function(container) {
+    var inner_colours = ['innerbricktype1_1', 'innerbricktype1_2', 'innerbricktype1_3', 'innerbricktype1_4', 'innerbricktype1_5', 'innerbricktype1_6'];
+    var border_colours = ['borderbricktype1_1', 'borderbricktype1_2', 'borderbricktype1_3', 'borderbricktype1_4', 'borderbricktype1_5', 'borderbricktype1_6'];
+    var border_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
+    var inner_svg = container.rect(this.x + 3, this.y + 3, BRICK_WIDTH - 6, BRICK_HEIGHT - 6);
+    if (this.type == 1){
+      var rnd = Math.floor((Math.random() * inner_colours.length));
+      border_svg.addClass(border_colours[rnd]);
+      inner_svg.addClass(inner_colours[rnd]);
+    }
+    else {
+      if (this.type == 2) {
+        border_svg.addClass('borderbricktype2');
+        inner_svg.addClass('innerbricktype2');
+      }
+      else {
+        border_svg.addClass('borderbricktype3');
+        inner_svg.addClass('innerbricktype3');
+      }
+    }
+    brick_svg = container.group(border_svg, inner_svg);
+  };
+
+  this.hit = function (container) {
+    if ( (this.type == 1) && (this.hits > 0) ) {
+      this.hits--;
+    }
+    else {
+      if ( (this.type == 2) && (this.hits > 0) ) {
+        this.hits--;
+        if (!damaged) {
+          damaged = true;
+          damage_svg = container.polyline(this.x, this.y, this.x+10, this.y+10, this.x+15, this.y+5,
+            this.x+20, this.y+10, this.x+25, this.y+2, this.x+38, this.y+11);
+          damage_svg.addClass('damagebrick');
+        }
+      }
+      else {
+        if (this.type === 0) {
+          var blink_svg = container.rect(this.x, this.y, BRICK_WIDTH, BRICK_HEIGHT);
+          blink_svg.addClass('blinkbrick');
+          setTimeout(function(){
+            blink_svg.remove();
+          }, BLINK_TIME);
+        }
+      }
+    }
+  };
+
+  this.remove = function() {
+    brick_svg.remove();
+  };
+
+  this.draw = function() {
+    if ( (this.hits === 0) && (this.type !== 0)) {
+      brick_svg.remove();
+      if (damage_svg != null) {
+        damage_svg.remove();
+      }
+    }
+  };
+
+}
+
 function Player (id, lifes, container) {
 
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
-  var BALL_SPEED = 3;
+  var BALL_SPEED = 2;
   var BRICK_PADDING_Y = 25;
-  var PICKUP_PROB = 0.3;
   var BRICKS_LVL1 = 65;
   var BRICKS_LVL2 = 91;
   var BRICKS_LVL3 = 104;
@@ -1118,32 +1109,19 @@ function Player (id, lifes, container) {
     }
   };
 
-  this.addPickUp = function(x, y) {
+  this.addPickUp = function(brick_pickup) {
     var rnd;
-    if (!this.pickup_floating  && !this.pickup_blocked) {
-      rnd = Math.random();
-      if (rnd < PICKUP_PROB) {
-        if (this.pickup_active != null) {
-          if (this.pickup_active.type != "A") {
-            if (this.pickup_active.ended) {
-              this.pickup = new PickUp(x, y, 'NONE');
-            }
-            else {
-              this.pickup = new PickUp(x, y, this.pickup_active.type);
-            }
-          }
-          else{
-            if (this.pickup_active.ended) {
-              this.pickup = new PickUp(x, y, 'NONE');
-            }
-          }
+    if (!this.pickup_floating) {
+      if (this.pickup_active != null) {
+        if ( ((this.pickup_active.type != "A") && (brick_pickup.type != this.pickup_active.type)) || (this.pickup_active.ended) ) {
+          this.pickup = brick_pickup;
         }
-        else {
-          this.pickup = new PickUp(x, y, 'NONE');
-        }
-        this.pickup.init(this.container);
-        this.pickup_floating = true;
       }
+      else {
+        this.pickup = brick_pickup;
+      }
+      this.pickup.init(this.container);
+      this.pickup_floating = true;
     }
   };
 
@@ -1255,7 +1233,9 @@ function Player (id, lifes, container) {
         }
         if (remove_brick) {
           this.amount_bricks--;
-          this.addPickUp(this.bricks[i].x, this.bricks[i].y);
+          if (this.bricks[i].pickup != null) {
+            this.addPickUp(this.bricks[i].pickup);
+          }
         }
       }
     }
@@ -1271,7 +1251,7 @@ function Player (id, lifes, container) {
         if ( ((pickup_x > this.paddle.x) && (pickup_x < this.paddle.x + this.paddle.width)) || ((pickup_x2 < this.paddle.x + this.paddle.width) && (pickup_x2 > this.paddle.x)) ) {
           this.pickup.touch_bottom = true;
           this.pickup_floating = false;
-          if (this.pickup_active !== null) {
+          if (this.pickup_active != null) {
             this.pickup_active.endEffect(this.balls, this.paddle, rival);
           }
           this.pickup_active = this.pickup;
@@ -1304,7 +1284,9 @@ function Player (id, lifes, container) {
           }
           if (remove_brick) {
             this.amount_bricks--;
-            this.addPickUp(this.bricks[j].x, this.bricks[j].y);
+            if (this.bricks[j].pickup != null) {
+              this.addPickUp(this.bricks[j].pickup);
+            }
           }
         }
       }
@@ -1442,29 +1424,26 @@ function Arkanoid() {
       if (i === 0) {
         var controls2_svg = players[i].container.text(players[i].viewbox.width/2 - 55, players[i].viewbox.height/2 - 25, "Z: Move Left");
         var controls3_svg = players[i].container.text(players[i].viewbox.width/2 - 55, players[i].viewbox.height/2 - 5, "X: Move Right");
-        var controls4_svg = players[i].container.text(players[i].viewbox.width/2 - 55, players[i].viewbox.height/2 + 15, "S: Shoot");
-        var controls5_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 + 100, "Press \"Space\" to Start.");
+        var controls4_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 + 100, "Press \"Space\" to Start.");
       }
       else {
         var controls2_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 - 25, "Left Arrow: Move Left");
         var controls3_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 - 5, "Right Arrow: Move Right");
-        var controls4_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 + 15, "Up Arrow: Shoot");
-        var controls5_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 + 100, "Press \"Enter\" to Start.");
+        var controls4_svg = players[i].container.text(players[i].viewbox.width/2 - 90, players[i].viewbox.height/2 + 100, "Press \"Enter\" to Start.");
       }
       controls1_svg.addClass('levelmessage');
       controls2_svg.addClass('levelmessage');
       controls3_svg.addClass('levelmessage');
       controls4_svg.addClass('levelmessage');
-      controls5_svg.addClass('levelmessage');
       if (i === 0) {
         background_start_player1_svg = players[i].container.rect(0, 0, players[i].container.attr('width'), players[i].container.attr('height'));
         background_start_player1_svg.addClass('backgroundlevel');
-        controls_player1_svg = players[i].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
+        controls_player1_svg = players[i].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg);
       }
       else {
         background_start_player2_svg = players[i].container.rect(0, 0, players[i].container.attr('width'), players[i].container.attr('height'));
         background_start_player2_svg.addClass('backgroundlevel');
-        controls_player2_svg = players[i].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg, controls5_svg);
+        controls_player2_svg = players[i].container.g(controls1_svg, controls2_svg, controls3_svg, controls4_svg);
       }
     }
   };
@@ -1520,6 +1499,6 @@ $(document).ready(function() {
     if (game.checkGameOver()){
       clearInterval(loop);
     }
-  }, 1000/60);
+  }, 1000/30);
 
 });

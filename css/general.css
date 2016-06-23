@@ -8,8 +8,8 @@
       font-size: 22px;
     }
 
-    .g-signin2 {
-      transform: scale(0.5, 0.5);
+    .login {
+      transform: scale(0.6, 0.6);
       right: 0;
       top: 1%;
     }
@@ -94,8 +94,8 @@
     font-size: 22px;
   }
 
-  .g-signin2 {
-    transform: scale(0.7, 0.7);
+  .login {
+    transform: scale(0.8, 0.8);
     right: 5%;
     top: 2%;
   }
@@ -171,8 +171,7 @@
     width: 487px;
   }
 
-  .g-signin2 {
-    transform: scale(1, 1);
+  .login {
     right: 10%;
     top: 5%;
   }
@@ -426,10 +425,6 @@ path {
   margin-right: 20px;
 }
 
-.g-signin2 {
-  position: absolute;
-}
-
 .logged {
   position: absolute;
 }
@@ -512,4 +507,71 @@ path {
 .headergrid {
   font-family: arkanoid;
   border-bottom: 1px solid white;
+}
+
+.login {
+  position: absolute;
+  transition: box-shadow 1s ease;
+}
+
+.login:hover {
+  box-shadow:
+  	0 0 20px blue,
+    0 0 20px blue,
+    0 0 20px blue
+}
+
+.g-signin2 {
+  position: relative;
+  left: 90px;
+  margin-bottom: 30px;
+}
+
+form {
+  width:300px;
+  margin: 0 auto;
+  font-size: 18px;
+}
+
+input {
+  border:1px solid #ccc;
+  font-size:18px;
+  width:300px;
+  display:block;
+  margin-bottom:15px;
+  margin-top:5px;
+  border-radius:5px;
+}
+
+.submit_button {
+  font-size: 22px;
+  margin-top: 30px;
+  background-color: #FFFFFF;
+  color: #000000;
+  font-family: arkanoid;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+  .submit_button:focus {
+    outline: none;
+  }
+
+  .submit_button:hover {
+    background-color: #000000;
+    color: #FFFFFF;
+  }
+
+.register {
+  font-size: 26px;
+  font-family: arkanoid;
+}
+
+.error_message {
+  color: #D8000C;
+  background-color: #FFBABA;
+}
+
+.error_input {
+  border: 1px solid #FF0000;
 }
