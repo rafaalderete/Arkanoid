@@ -65,7 +65,6 @@
           <li><span class="button current">Multiplayer</span></li>
         </ul>
       </li>
-      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 

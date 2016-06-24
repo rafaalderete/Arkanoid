@@ -64,7 +64,6 @@
           <li><a class="button" href="topscores_multiplayer.php">Multiplayer</a></li>
         </ul>
       </li>
-      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 

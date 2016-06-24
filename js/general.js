@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  var SLIDEWIDTH = 480;
+  var SLIDEWIDTH = 500;
   var SLIDETIME = 5000;
   var imageposition = 1;
   var sliding = false;

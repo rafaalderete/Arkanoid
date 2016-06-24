@@ -9,12 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $value = $data['id_game'];
     delete($table, $column, $value);
   }
-  if ($data['player_initial_data_id'] != null && $data['player_data_id'] != null) {
+  if ($data['player_initial_data_id'] != null) {
     $table = "games_data";
     $column = "id";
     $value = $data['player_initial_data_id'];
-    delete($table, $column, $value);
-    $value = $data['player_data_id'];
     delete($table, $column, $value);
   }
 }

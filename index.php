@@ -62,17 +62,16 @@
           <li><a class="button" href="topscores_multiplayer.php">Multiplayer</a></li>
         </ul>
       </li>
-      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 
   <section>
     <div class="carousel">
       <ul class="slides">
-        <li><img src="resources/img/fish.jpg"></li>
-        <li><img src="resources/img/elephant.jpg"></li>
-        <li><img src="resources/img/giraffe.jpg"></li>
-        <li><img src="resources/img/penguins.jpg"></li>
+        <li><img src="resources/img/pickup.jpg" alt="pickups_effects"></li>
+        <li><img src="resources/img/levels.jpg" alt="levels"></li>
+        <li><img src="resources/img/multiplayer.jpg" alt="multiplayer"></li>
+        <li><img src="resources/img/scores.jpg" alt="scores"></li>
       </ul>
       <ul class="dots">
         <li id="dot1" position="1" class="dot active"></li>
@@ -84,18 +83,161 @@
   </section>
 
   <section>
-
+    <div class="row">
+      <div class="col-6">
+        <span class="headergrid">List of PickUps</span>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupa.png" alt="pickup_a">
+              <figcaption>Multiball</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+                  Adds two balls.
+                  Available in SinglePlayer and MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupb.png" alt="pickup_b">
+              <figcaption>Expand</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Increment width of the Paddle.
+              Available in SinglePlayer and MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupc.png" alt="pickup_c">
+              <figcaption>Cannon Form</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Change to Cannon Form for 8 seconds and you can shoot laser.
+              Available in SinglePlayer
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupd.png" alt="pickup_d">
+              <figcaption>Barrier</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Prevent balls to touch the bottom for 12 seconds.
+              Available in SinglePlayer and MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupe.png" alt="pickup_e">
+              <figcaption>+ Ball Speed</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Increase ball speed.
+              Available in SinglePlayer and MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupf.png" alt="pickup_f">
+              <figcaption>- Ball Speed</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Decrease ball speed.
+              Available in SinglePlayer and MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupg.png" alt="pickup_g">
+              <figcaption>+ Life</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Add a Life.
+              Available in SinglePlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickuph.png" alt="pickup_h">
+              <figcaption>+ Enemy Ball Speed</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Increase rival ball speed.
+              Available in MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row pickup">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupi.png" alt="pickup_i">
+              <figcaption>No PickUp</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Blocks rival pickups for 5 seconds.
+              Available in MultiPlayer.
+            </span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <figure>
+              <img src="resources/img/pickupj.png" alt="pickup_j">
+              <figcaption>Cant Move</figcaption>
+            </figure>
+          </div>
+          <div class="col-12">
+            <span>
+              Rival cant move for 400 milliseconds.
+              Available in MultiPlayer.
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6"><aside>
+        <a class="twitter-timeline"  href="https://twitter.com/Arkanoid_Online" data-widget-id="737510510845788160" width="300"
+        height="200">Tweets by @Arkanoid_Online.</a>
+      </aside></div>
+    </div>
   </section>
-
-  <aside>
-    <a class="twitter-timeline"  href="https://twitter.com/Arkanoid_Online" data-widget-id="737510510845788160" width="300"
-    height="200">Tweets by @Arkanoid_Online.</a>
-  </aside>
 
   <footer>
       <ul>
         <li>
-          <a href="">
+          <a href="https://www.facebook.com/pages/Arkanoid/112112165468436?fref=ts">
             <svg class="svg-facebook" width="30px" height="30px" viewBox="0 0 0.494538 0.494538">
               <path id="facebook-background" fill="white" d="M0.467237 0.494538c0.0150774,0 0.0273011,-0.0122237
               0.0273011,-0.0273011l0 -0.439936c0,-0.0150774 -0.0122237,-0.0273011

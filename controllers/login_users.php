@@ -8,8 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   define("PASSWORDCHARACTERS", 3);
   define("USERNAMEPASSWORDERROR", 8);
 
-  $username = $_REQUEST['username'];
-  $password = $_REQUEST['password'];
+  $username = filter_var($_REQUEST['username'], FILTER_SANITIZE_STRING);
+  $password = filter_var($_REQUEST['password'], FILTER_SANITIZE_STRING);
   $errors = array();
   if ($username == null || $username == "") {
     array_push($errors, USERNAMENULL);

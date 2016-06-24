@@ -11,9 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   define("PASSWORDNOTSAME", 6);
   define("USERNAMEEXIST", 7);
 
-  $username = $_REQUEST['username'];
-  $password = $_REQUEST['password'];
-  $repeat_password = $_REQUEST['repeat_password'];
+  $username = filter_var($_REQUEST['username'], FILTER_SANITIZE_STRING);
+  $password = filter_var($_REQUEST['password'], FILTER_SANITIZE_STRING);
+  $repeat_password = filter_var($_REQUEST['repeat_password'], FILTER_SANITIZE_STRING);
   $errors = array();
   if ($username == null || $username == "") {
     array_push($errors, USERNAMENULL);

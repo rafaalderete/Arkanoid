@@ -40,7 +40,7 @@
 
     .big-menu li span, .big-menu li a {
       padding: 5px 0;
-      border-bottom: 1px solid blue;
+      border-bottom: 1px solid #0000FF;
     }
 
     .dropdown-content {
@@ -55,6 +55,10 @@
         margin: 5px 0;
         padding: 0;
       }
+
+    .carousel {
+      display: none;
+    }
 
     .svg-facebook {
       width: 20px;
@@ -122,7 +126,7 @@
   .dropdown-content {
     font-size: 15px;
     position: absolute;
-    background-color: black;
+    background-color: #000000;
   }
 
     .dropdown-content li {
@@ -130,12 +134,16 @@
       padding: 0;
       padding-left: 5px;
       margin: 0 0;
-      background-color: black;
+      background-color: #000000;
     }
 
     .dropdown-content li a, .dropdown-content li span{
       float: left;
     }
+
+  .carousel {
+    display: block;
+  }
 
   .svg-facebook {
     width: 25px;
@@ -203,7 +211,7 @@
   .dropdown-content {
     font-size: 17px;
     position: absolute;
-    background-color: black;
+    background-color: #000000;
   }
 
     .dropdown-content li {
@@ -216,6 +224,10 @@
     .dropdown-content li a, .dropdown-content li span{
       float: left;
     }
+
+  .carousel {
+    display: block;
+  }
 
   .svg-facebook {
     width: 30px;
@@ -260,7 +272,7 @@
 body {
   background: url('../resources/img/background.jpg') fixed;
   margin: 0 10%;
-  color: white;
+  color: #FFFFFF;
 }
 
 ul {
@@ -268,7 +280,7 @@ ul {
 }
 
 a:link, a:visited {
-    color: white;
+    color: #FFFFFF;
     text-decoration: none;
 }
 
@@ -284,7 +296,7 @@ h1 {
 
 footer {
   width: 100%;
-  border-top: 1px solid white;
+  border-top: 1px solid #FFFFFF;
 }
 
   footer p {
@@ -341,10 +353,10 @@ section {
 
 .button:hover, .dropdown:hover .dropdownbutton, .current {
   text-shadow:
-  	0 0 20px blue,
-    0 0 20px blue,
-    0 0 20px blue,
-    0 0 20px blue
+  	0 0 20px #0000FF,
+    0 0 20px #0000FF,
+    0 0 20px #0000FF,
+    0 0 20px #0000FF
 }
 
 
@@ -359,29 +371,27 @@ section {
 }
 
   .dropdown-content li a, .dropdown-content li span{
-      border-bottom: solid 1px red;
+      border-bottom: solid 1px #FF0000;
   }
 
 .carousel {
-		width: 480px;
+		width: 500px;
 		overflow: hidden;
     padding: 0;
-    display: block;
     margin: 0 auto;
-    position: relative;
     z-index: 1;
 }
 
 .slides {
-	width: 1920px;
+	width: 2000px;
 	padding: 0;
   margin: 0;
 }
 
 	.carousel .slides li {
-		width: 480px;
+		width: 500px;
 		text-align: center;
-		height: 280px;
+		height: 300px;
 		float: left;
 	}
 
@@ -392,8 +402,8 @@ section {
 }
 
 .dot {
-  background-color: black;
-  border: 1px solid white;
+  background-color: #000000;
+  border: 1px solid #FFFFFF;
   border-radius: 5px;
   display: inline-block;
   height: 10px;
@@ -402,7 +412,7 @@ section {
 }
 
 .active {
-  background-color: white;
+  background-color: #FFFFFF;
 }
 
 path {
@@ -506,7 +516,7 @@ path {
 
 .headergrid {
   font-family: arkanoid;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid #FFFFFF;
 }
 
 .login {
@@ -516,9 +526,9 @@ path {
 
 .login:hover {
   box-shadow:
-  	0 0 20px blue,
-    0 0 20px blue,
-    0 0 20px blue
+  	0 0 20px #0000FF,
+    0 0 20px #0000FF,
+    0 0 20px #0000FF
 }
 
 .g-signin2 {
@@ -574,4 +584,13 @@ input {
 
 .error_input {
   border: 1px solid #FF0000;
+}
+
+.waiting {
+  margin-left: 200px;
+  font-size: 30px;
+}
+
+.pickup {
+  border-bottom: 1px solid #FFFFFF;
 }

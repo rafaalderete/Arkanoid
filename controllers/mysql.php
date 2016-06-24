@@ -49,7 +49,7 @@ function update($table, $toSetColumns, $toSetValues, $toWhereColumns, $toWhereVa
   for ($i = 0; $i < sizeof($toWhereColumns); $i++) {
     $sql .= " " . $toWhereColumns[$i] . "=" . $toWhereValues[$i];
     if ($i != sizeof($toWhereColumns)-1) {
-      $sql .= " AND";
+      $sql .= ",";
     }
   }
   mysqli_query($connection, $sql) or die(mysqli_error($connection));

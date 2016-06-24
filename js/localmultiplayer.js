@@ -834,7 +834,7 @@ function Player (id, lifes, container) {
 
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
-  var BALL_SPEED = 2;
+  var BALL_SPEED = 2.5;
   var BRICK_PADDING_Y = 25;
   var BRICKS_LVL1 = 65;
   var BRICKS_LVL2 = 91;

@@ -831,7 +831,7 @@ function Player (id, lifes, container) {
 
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
-  var BALL_SPEED = 2;
+  var BALL_SPEED = 2.5;
   var BRICK_PADDING_Y = 25;
   var PICKUP_PROB = 0.3;
   var BRICKS_LVL1 = 65;
@@ -1357,6 +1357,7 @@ function Arkanoid() {
   var ready1_svg;
   var ready2_svg;
   var abandon_svg;
+  var waiting_svg;
   var initial_data_received = false;
   var ball_sync_received = false;
 
@@ -1496,6 +1497,7 @@ function Arkanoid() {
     if (this.game_matched) {
       if (!gameEnded()) {
         this.game_abandon = true;
+        alert(this.game_abandon);
         this.sendData(false);
         this.sendGameResult("LOSE");
       }
@@ -1505,7 +1507,6 @@ function Arkanoid() {
     xhr.open('POST', 'controllers/delete_game.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     data.id_game = this.id_game;
-    data.player_data_id = this.player_data_id;
     data.player_initial_data_id = this.player_initial_data_id;
     var jsondata= JSON.stringify(data);
     xhr.send("data=" + jsondata);
@@ -1566,6 +1567,7 @@ function Arkanoid() {
       if (xhr.readyState == 4 && xhr.status == 200) {
         if (xhr.responseText !== "") {
           response = JSON.parse(xhr.responseText);
+
           if (response.game_abandon) {
             players[1].lifes--;
             if (abandon_svg == null) {
@@ -1704,6 +1706,7 @@ $(document).ready(function() {
     game.searchGame(game);
     var loop = setInterval(function() {
       if (game.game_matched) {
+        $('.waiting').css("display", "none");
         game.run();
         if (game.checkGameOver()){
           game.deleteGame();

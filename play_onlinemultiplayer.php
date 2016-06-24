@@ -64,7 +64,6 @@
           <li><a class="button" href="topscores_multiplayer.php">Multiplayer</a></li>
         </ul>
       </li>
-      <li><a class="dropdownbutton button" href="contact.php">Contact</a></li>
     </ul>
   </nav>
 
@@ -72,6 +71,7 @@
     <?php
       if (isset($_SESSION['name']) && $_SESSION['name']) {
         echo('<div class="gamelocalmulti">
+                <p class="waiting col-12">Waiting for Another Player...</p>
                 <svg id="container1" width="520" height="525" viewBox="0 0 520 525">
                 </svg>
                 <svg id="container2" width="520" height="525" viewBox="0 0 520 525">
