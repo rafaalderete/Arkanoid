@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $values = array("'$_REQUEST[email]'");
   $users = query($table, $toSelectColumns, $toWhereColumns, $values);
 
+  //Si el usuario google ya existe y el nombre es diferente, hace el update del nombre.
   if (sizeof($users) > 0) {
     $_SESSION['id'] = $users[0]['id_user'];
     if ($users[0]['name'] != $_REQUEST['name']) {
@@ -22,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       update($table, $toSetColumns, $toSetValues, $toWhereColumns, $toWhereValues);
     }
   }
+  //En caso de que el usuario google no exista, lo crea.
   else {
     $table = "google_users";
     $columns = array("email", "name");

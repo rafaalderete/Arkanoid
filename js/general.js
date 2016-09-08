@@ -62,6 +62,7 @@ $(document).ready(function() {
     $(this).removeClass('error_input');
   });
 
+  //Twitter widget.
   !function(d,s,id){
     var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
     if(!d.getElementById(id)){js=d.createElement(s);

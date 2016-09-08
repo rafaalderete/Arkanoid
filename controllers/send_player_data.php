@@ -1,4 +1,5 @@
 <?php
+//Envío de datos de un jugador en el modo online-multiplayer para que se actualicen enla DB.
 require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'ball_sync_received' => $data['ball_sync_received'],
     'player_paddle_x' => $data['player_paddle_x']
   );
+  //La primera vez que envía datos.
   if ($data['initial']) {
     $player_dataex = array(
       'player_name' => $_SESSION['name'],

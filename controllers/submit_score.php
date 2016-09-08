@@ -1,4 +1,5 @@
 <?php
+//Guarda la puntuación obtenida por un jugador en el modo singleplayer.
 require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

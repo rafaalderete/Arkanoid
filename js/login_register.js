@@ -8,6 +8,7 @@ var PASSWORDNOTSAME = 6;
 var USERNAMEEXIST = 7;
 var USERNAMEPASSWORDERROR = 8;
 
+//Mensajes de error dependiendo del tipo de error.
 function errorMessage (error) {
   switch (error) {
     case 0: $('#error_username').append("<p><span class=\"error_message\">Username empty!</span></p>");
@@ -50,6 +51,7 @@ function errorMessage (error) {
   }
 }
 
+//Google login.
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   var xhr = new XMLHttpRequest();
@@ -63,6 +65,7 @@ function onSignIn(googleUser) {
   xhr.send("email=" + profile.getEmail() + "&name=" + profile.getName());
 }
 
+//Google logout.
 function signOut() {
   gapi.load('auth2', function() {
    gapi.auth2.init({
@@ -117,7 +120,7 @@ function login() {
           response = JSON.parse(xhr.responseText);
           if (response.length > 0) {
             for (i = 0; i < response.length; i++) {
-              errorMessage(response[i]);
+              errorMessage(response[i]); //Agrega todos los errores encontradosdel lado del servidor.
             }
           }
           else {
@@ -175,7 +178,7 @@ function register() {
             response = JSON.parse(xhr.responseText);
             if (response.length > 0) {
               for (i = 0; i < response.length; i++) {
-                errorMessage(response[i]);
+                errorMessage(response[i]);//Agrega todos los errores encontradosdel lado del servidor.
               }
             }
             else {

@@ -1,4 +1,5 @@
 <?php
+//Devuelve los datos de un rival.
 require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

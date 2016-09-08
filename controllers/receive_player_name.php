@@ -1,4 +1,5 @@
 <?php
+//Devuelve el nombre para un usuario.
 require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

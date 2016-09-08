@@ -1,4 +1,5 @@
 <?php
+//Actuliza el puntaje de un usuario, ya sea haya ganado o perdido en el modo online-multiplayer.
 require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

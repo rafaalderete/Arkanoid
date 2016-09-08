@@ -1,4 +1,5 @@
 <?php
+//Credenciales de la DB.
 define("IP", "localhost");
 define("USER", "root");
 define("PASS", "");
@@ -81,6 +82,23 @@ function query($table, $toSelectColumns, $toWhereColumns, $values) {
   mysqli_close($connection);
 }
 
+//Ordena un arreglo de mayor a menor en base a un campo.
+function scoresSort (&$array, $key) {
+    $sorter=array();
+    $ret=array();
+    reset($array);
+    foreach ($array as $ii => $va) {
+        $sorter[$ii]=$va[$key];
+    }
+    arsort($sorter);
+    foreach ($sorter as $ii => $va) {
+        $ret[$ii]=$array[$ii];
+    }
+    $array=$ret;
+}
+
+//Obtiene las primeras 15 puntuaciones más altas del modo singleplayer de los
+//usuarios propios y los usuarios google y los ordena.
 function topScoresSingle() {
   $connection = mysqli_connect(IP, USER, PASS, DB) or die();
   $scores = array();
@@ -98,10 +116,13 @@ function topScoresSingle() {
   while ($rec = mysqli_fetch_array($records)){
     array_push($scores, $rec);
   }
+  scoresSort($scores, "score");
   return $scores;
   mysqli_close($connection);
 }
 
+//Obtiene las primeras 15 puntuaciones más altas del modo online-multiplayer de los
+//usuarios propios y los usuarios google y los ordena.
 function topScoresMulti() {
   $connection = mysqli_connect(IP, USER, PASS, DB) or die();
   $scores = array();
@@ -119,6 +140,7 @@ function topScoresMulti() {
   while ($rec = mysqli_fetch_array($records)){
     array_push($scores, $rec);
   }
+  scoresSort($scores, "win");
   return $scores;
   mysqli_close($connection);
 }

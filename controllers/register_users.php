@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = filter_var($_REQUEST['password'], FILTER_SANITIZE_STRING);
   $repeat_password = filter_var($_REQUEST['repeat_password'], FILTER_SANITIZE_STRING);
   $errors = array();
+  //Controles de los distintos campos.
   if ($username == null || $username == "") {
     array_push($errors, USERNAMENULL);
   }
@@ -42,8 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $values = array("'" . $username . "'");
   $users = query($table, $toSelectColumns, $toWhereColumns, $values);
   if (sizeof($users) > 0) {
-    array_push($errors, USERNAMEEXIST);
+    array_push($errors, USERNAMEEXIST); //Nombre de usuario existente.
   }
+  //Si no hay errores, se realiza el alta de usuario.
   if (sizeof($errors) == 0) {
     $encrypt_password = "'" . md5($password) . "'";
     $table = "users";
@@ -58,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['name'] = $username;
     $_SESSION['type'] = "users";
   }
+  //Se envía un json con todos los errores encontrados.
   $json_errors = json_encode($errors);
   echo($json_errors);
 

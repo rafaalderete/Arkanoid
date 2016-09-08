@@ -1,4 +1,5 @@
 <?php
+//Borra el juego creado y los datos del jugador.
 require('mysql.php');
 session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

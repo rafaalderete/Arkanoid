@@ -18,6 +18,15 @@
   <script type="text/javascript" src="js/libs/snap.svg-min.js"></script>
   <script type="text/javascript" src="js/general.js"></script>
   <script type="text/javascript" src="js/login_register.js"></script>
+  <script type="text/javascript" src="js/controls_singleplayer.js"></script>
+  <script type="text/javascript" src="js/bullet.js"></script>
+  <script type="text/javascript" src="js/ball.js"></script>
+  <script type="text/javascript" src="js/barrier.js"></script>
+  <script type="text/javascript" src="js/paddle.js"></script>
+  <script type="text/javascript" src="js/pickup_singleplayer.js"></script>
+  <script type="text/javascript" src="js/brick.js"></script>
+  <script type="text/javascript" src="js/level.js"></script>
+  <script type="text/javascript" src="js/player_singleplayer.js"></script>
   <script type="text/javascript" src="js/singleplayer.js"></script>
 </head>
 
