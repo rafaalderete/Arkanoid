@@ -14,7 +14,7 @@ function Level (gamemode) {
   this.amount_bricks;
 
   //Genera los bricks y su tipo, dependiendo el nivel.
-  this.initLevel = function(container, level) {
+  this.initLevel = function(container, id, level) {
     var brick_x = 0;
     var brick_y;
     var column = 0;
@@ -24,10 +24,10 @@ function Level (gamemode) {
       case 1: brick_y = 50;
               for (i = 0; i < BRICKS_LVL1; i++) {
                 if (row === 0) {
-                  this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                  this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                 }
                 else {
-                  this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                  this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                 }
                 this.amount_bricks++;
                 column++;
@@ -48,14 +48,14 @@ function Level (gamemode) {
               for (i = 0; i < BRICKS_LVL2; i++) {
                 if (row == 12){
                   if (column == 12){
-                    this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                    this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                   }
                   else {
-                    this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                    this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                   }
                 }
                 else {
-                  this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                  this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                 }
                 this.amount_bricks++;
                 column++;
@@ -79,32 +79,32 @@ function Level (gamemode) {
                 if ( ((row % 2) !== 0) && (row != 7) ) {
                   if ( (column >= 0) && (column < 3) ) {
                     if (first && (count < 3)) {
-                      this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                      this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                       this.amount_bricks++;
                       count++;
                     }
                     else {
-                      this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 0);
+                      this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 0);
                     }
                   }
                   else {
                     if ( (column > 9) && (column < 13) ) {
                       if (!first && (count < 3)) {
-                        this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                        this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                         this.amount_bricks++;
                         count++;
                       }
                       else {
-                        this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 0);
+                        this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 0);
                       }
                     }
                     else {
-                      this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 0);
+                      this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 0);
                     }
                   }
                 }
                 else {
-                  this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                  this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                   this.amount_bricks++;
                 }
                 column++;
@@ -134,7 +134,7 @@ function Level (gamemode) {
               for (i = 0; i < BRICKS_LVL4; i++) {
                 if ( (row === 0) || (row == 10) ) {
                   if ( (column > 0) && (column < 12)){
-                    this.bricks[j] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                    this.bricks[j] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                     this.amount_bricks++;
                     j++;
                   }
@@ -142,7 +142,7 @@ function Level (gamemode) {
                 else {
                   if ( (row == 1) || (row == 9) ) {
                     if ( (column == 1) || (column == 11)){
-                      this.bricks[j] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                      this.bricks[j] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                       this.amount_bricks++;
                       j++;
                     }
@@ -150,7 +150,7 @@ function Level (gamemode) {
                   else {
                     if ( (row == 2) || (row == 8) ) {
                       if ( (column !== 0) && (column != 2) && (column != 10) && (column != 12)){
-                        this.bricks[j] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                        this.bricks[j] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                         this.amount_bricks++;
                         j++;
                       }
@@ -158,7 +158,7 @@ function Level (gamemode) {
                     else {
                       if ( (row == 3) || (row == 7) ) {
                         if ( (column == 1) || (column == 3) || (column == 9) || (column == 11)){
-                          this.bricks[j] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                          this.bricks[j] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                           this.amount_bricks++;
                           j++;
                         }
@@ -166,7 +166,7 @@ function Level (gamemode) {
                       else {
                         if ( (row == 4) || (row == 6) ) {
                           if ( (column !== 0) && (column != 2) && (column != 4) && (column != 8) && (column != 10) && (column != 12)){
-                            this.bricks[j] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                            this.bricks[j] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                             this.amount_bricks++;
                             j++;
                           }
@@ -174,7 +174,7 @@ function Level (gamemode) {
                         else {
                           if (row == 5) {
                             if ( (column !== 0) && (column != 2) && (column != 4) && (column != 6) && (column != 8) && (column != 10) && (column != 12)){
-                              this.bricks[j] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                              this.bricks[j] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                               this.amount_bricks++;
                               j++;
                             }
@@ -201,20 +201,20 @@ function Level (gamemode) {
               for (i = 0; i < BRICKS_LVL5; i++) {
                 if (row == 5){
                   if ( (column > 2) && (column < 10)){
-                    this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 0);
+                    this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 0);
                   }
                   else {
-                    this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                    this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                     this.amount_bricks++;
                   }
                 }
                 else {
                   if ( (row === 0) || (row == 10) ){
-                    this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 2);
+                    this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 2);
                     this.amount_bricks++;
                   }
                   else {
-                    this.bricks[i] = new Brick(this.gamemode, this.id, brick_x, brick_y, 1);
+                    this.bricks[i] = new Brick(this.gamemode, id, brick_x, brick_y, 1);
                     this.amount_bricks++;
                   }
                 }

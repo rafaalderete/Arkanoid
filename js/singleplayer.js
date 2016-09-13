@@ -4,10 +4,13 @@ function Arkanoid() {
   var LIMIT_LEVEL = 5;
   var LEVEL_TIMER = 2500;
   var GAMEOVER_HEIGHT = 120;
+  var SINGLEPLAYER = 0;
+  var LOCALMULTIPLAYER = 1;
+  var ONLINEMULTIPLAYER = 2;
 
   var container = Snap("#container");
   var viewbox = container.attr('viewBox');
-  var player = new Player (0, 3, container);
+  var player = new SinglePlayer (SINGLEPLAYER, 0, 3, container);
   var level = 1;
   var game_started = false;
   var level_started = false;

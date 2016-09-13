@@ -3,8 +3,11 @@ function Arkanoid() {
 
   var LEVELS = 5;
   var GAMEOVER_HEIGHT = 100;
+  var SINGLEPLAYER = 0;
+  var LOCALMULTIPLAYER = 1;
+  var ONLINEMULTIPLAYER = 2;
 
-  var players = [new Player (0, 1, Snap("#container1")), new Player (1, 1, Snap("#container2"))];
+  var players = [new PlayerMultiPlayer (LOCALMULTIPLAYER, 0, 1, Snap("#container1")), new PlayerMultiPlayer (LOCALMULTIPLAYER, 1, 1, Snap("#container2"))];
   var game_started1 = false;
   var game_started2 = false;
   var background_start_player1_svg;

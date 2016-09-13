@@ -6,6 +6,9 @@ function Arkanoid() {
   var SEARCHING = 0;
   var MATCHING = 1;
   var MATCHED = 2;
+  var SINGLEPLAYER = 0;
+  var LOCALMULTIPLAYER = 1;
+  var ONLINEMULTIPLAYER = 2;
 
   this.game_matched = false;
   this.game_status = SEARCHING;
@@ -16,7 +19,7 @@ function Arkanoid() {
   this.rival_initial_data_id = "";
   this.game_abandon = false;
   this.level;
-  var players = [new Player (0, 1, Snap("#container1")), new Player (1, 1, Snap("#container2"))];
+  var players = [new PlayerMultiPlayer (ONLINEMULTIPLAYER, 0, 1, Snap("#container1")), new PlayerMultiPlayer (ONLINEMULTIPLAYER, 1, 1, Snap("#container2"))];
   var game_started1 = false;
   var game_started2 = false;
   var background_start_player1_svg;
@@ -268,7 +271,7 @@ function Arkanoid() {
               }
               for (i = 0; i < players[1].level.bricks.length;i++) {
                 if (response.player_bricks[i].pickup_type != null) {
-                  players[1].level.bricks[i].pickup = new PickUp(players[1].level.bricks[i].x, players[1].level.bricks[i].y, response.player_bricks[i].pickup_type);
+                  players[1].level.bricks[i].pickup = new PickUp(ONLINEMULTIPLAYER, players[1].level.bricks[i].x, players[1].level.bricks[i].y, response.player_bricks[i].pickup_type);
                 }
               }
             }

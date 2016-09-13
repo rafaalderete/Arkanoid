@@ -3,8 +3,10 @@ function Brick(gamemode, id, x, y, type) {
   var BRICK_WIDTH = 40;
   var BRICK_HEIGHT = 15;
   var BLINK_TIME = 100;
-  var PICKUP_PROB = 0.3;
-  var LOCAL = 0;
+  var PICKUP_PROB = 0.9;
+  var SINGLEPLAYER = 0;
+  var LOCALMULTIPLAYER = 1;
+  var ONLINEMULTIPLAYER = 2;
 
   this.x = x;
 	this.y = y;
@@ -26,11 +28,11 @@ function Brick(gamemode, id, x, y, type) {
       this.score = 0;
     }
   }
-  if (gamemode === LOCAL) {
+  if (gamemode == SINGLEPLAYER || gamemode == LOCALMULTIPLAYER) {
     if ( (type == 1) || (type == 2) ) {
       var rnd = Math.random();
       if (rnd < PICKUP_PROB) {
-        this.pickup = new PickUp(x, y);
+        this.pickup = new PickUp(gamemode, x, y);
       }
     }
   }
@@ -40,7 +42,7 @@ function Brick(gamemode, id, x, y, type) {
       if ( (type == 1) || (type == 2) ) {
         var rnd = Math.random();
         if (rnd < PICKUP_PROB) {
-          this.pickup = new PickUp(x, y);
+          this.pickup = new PickUp(gamemode, x, y);
         }
       }
     }

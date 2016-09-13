@@ -1,34 +1,30 @@
-function Player (id, lifes, container) {
+function Player (gamemode, id, lifes, container) {
 
-  var BALL_SPEED = 2.5;
-  var LOCAL = 0;
-  var ONLINE = 1;
+  this.BALL_SPEED = 2.5;
 
   this.container = container;
   this.viewbox = this.container.attr('viewBox');
   this.id = id;
   this.lifes = lifes;
   this.paddle = new Paddle(this.viewbox);
-  this.balls = [new Ball(this.paddle.x + this.paddle.width/2, this.paddle.y, BALL_SPEED)];
-  this.level = new Level(ONLINE);
+  this.balls = [new Ball(this.paddle.x + this.paddle.width/2, this.paddle.y, this.BALL_SPEED)];
+  this.level;
   this.ball_sync = false;
   this.pickup;
   this.pickup_active;
-  var padddle_sound = new Audio('./resources/sounds/paddle.wav');
-  var brick1_sound = new Audio('./resources/sounds/brick1.wav');
-  var brick2_sound = new Audio('./resources/sounds/brick2.wav');
-  var pickup_sound = new Audio('./resources/sounds/pickup.wav');
+  this.score = 0;
+  this.padddle_sound = new Audio('./resources/sounds/paddle.wav');
+  this.brick1_sound = new Audio('./resources/sounds/brick1.wav');
+  this.brick2_sound = new Audio('./resources/sounds/brick2.wav');
+  this.pickup_sound = new Audio('./resources/sounds/pickup.wav');
+  this.hit_paddle = false;
   this.pickup_floating = false;
   this.pickup_blocked = false;
-  var hit_paddle = false;
+  this.lifes_svg;
+  this.score_svg;
 
   this.initLevel = function(level) {
-    this.level.initLevel(this.container, level);
-  };
-
-  this.init = function () {
-    this.paddle.init(this.container);
-    this.balls[0].init(this.container);
+    this.level.initLevel(this.container, this.id, level);
   };
 
   this.checkLoseLife = function() {
@@ -47,7 +43,7 @@ function Player (id, lifes, container) {
   };
 
   this.checkWinLevel = function()  {
-    if (this.amount_bricks === 0) {
+    if (this.level.amount_bricks === 0) {
       return true;
     }
     else {
@@ -83,15 +79,15 @@ function Player (id, lifes, container) {
       if(this.paddle.isBarrierActive()) {
         if (ball_y2 > this.paddle.y + this.paddle.height) {
           this.balls[j].speed_y = -this.balls[j].speed_y;
-          padddle_sound.cloneNode(true).play();
+          this.padddle_sound.cloneNode(true).play();
         }
       }
       //Colision con el Paddle.
       //Colision con la parte superior del Paddle.
-      if (!hit_paddle){
+      if (!this.hit_paddle){
         if (ball_y2 > this.paddle.y) {
           if ((this.balls[j].cx > this.paddle.x) && (this.balls[j].cx < this.paddle.x + this.paddle.width) && (this.balls[j].cy < this.paddle.y)){
-            padddle_sound.cloneNode(true).play();
+            this.padddle_sound.cloneNode(true).play();
             if ((this.balls[j].cx > this.paddle.x) && (this.balls[j].cx < this.paddle.x + (this.paddle.width / 2)) && (this.balls[j].speed_x > 0)) {
               this.balls[j].speed_x = -this.balls[j].speed_x;
             }
@@ -130,12 +126,12 @@ function Player (id, lifes, container) {
                 }
               }
             }
-            hit_paddle = true;
+            this.hit_paddle = true;
           }
           //Colision con los costados del Paddle.
           if ( (this.balls[j].cy > this.paddle.y) && (this.balls[j].cy < this.paddle.y + this.paddle.height) ) {
             if( (this.balls[j].cx > this.paddle.x) && (this.balls[j].cx < this.paddle.x + this.paddle.width) ){
-              padddle_sound.cloneNode(true).play();
+              this.padddle_sound.cloneNode(true).play();
               this.balls[j].speed_x = -this.balls[j].speed_x;
               this.balls[j].speed_y = -this.balls[j].total_speed * 0.7;
               if (this.balls[j].speed_x < 0) {
@@ -144,13 +140,13 @@ function Player (id, lifes, container) {
               else {
                 this.balls[j].speed_x = this.balls[j].total_speed * 1.5;
               }
-              hit_paddle = true;
+              this.hit_paddle = true;
             }
           }
         }
       }
       if (ball_y2 < this.paddle.y) {
-        hit_paddle = false;
+        this.hit_paddle = false;
       }
       //Colision con los Bricks.
       for(i = 0; i < this.level.bricks.length; i++) {
@@ -163,10 +159,10 @@ function Player (id, lifes, container) {
               this.balls[j].speed_y = -this.balls[j].speed_y;
               this.level.bricks[i].hit(this.container);
               if (this.level.bricks[i].type == 1) {
-                brick1_sound.cloneNode(true).play();
+                this.brick1_sound.cloneNode(true).play();
               }
               else {
-                brick2_sound.cloneNode(true).play();
+                this.brick2_sound.cloneNode(true).play();
               }
               if ( (this.level.bricks[i].type !== 0) && this.level.bricks[i].hits === 0) {
                 remove_brick = true;
@@ -181,10 +177,10 @@ function Player (id, lifes, container) {
                 this.balls[j].speed_x = -this.balls[j].speed_x;
                 this.level.bricks[i].hit(this.container);
                 if (this.level.bricks[i].type == 1) {
-                  brick1_sound.cloneNode(true).play();
+                  this.brick1_sound.cloneNode(true).play();
                 }
                 else {
-                  brick2_sound.cloneNode(true).play();
+                  this.brick2_sound.cloneNode(true).play();
                 }
                 if ( (this.level.bricks[i].type !== 0) && this.level.bricks[i].hits === 0) {
                   remove_brick = true;
@@ -194,31 +190,7 @@ function Player (id, lifes, container) {
           }
         }
         if (remove_brick) {
-          this.level.amount_bricks--;
-          if (this.level.bricks[i].pickup != null) {
-            this.addPickUp(this.level.bricks[i].pickup);
-          }
-        }
-      }
-    }
-  };
-
-  //Colisión del pickup con el paddle.
-  this.collisionPickUp = function(rival) {
-    if (this.pickup_floating && !this.pickup_blocked) {
-      var pickup_y = this.pickup.y;
-      var pickup_y2 = this.pickup.y + this.pickup.height;
-      var pickup_x = this.pickup.x;
-      var pickup_x2 = this.pickup.x + this.pickup.width;
-      if ( (pickup_y2 > this.paddle.y) && (pickup_y < (this.paddle.y + this.paddle.height)) ) {
-        if ( ((pickup_x > this.paddle.x) && (pickup_x < this.paddle.x + this.paddle.width)) || ((pickup_x2 < this.paddle.x + this.paddle.width) && (pickup_x2 > this.paddle.x)) ) {
-          pickup_sound.cloneNode(true).play();
-          this.pickup.touch_bottom = true;
-          this.pickup_floating = false;
-          if (this.pickup_active != null) {
-            this.pickup_active.endEffect(this.balls, this.paddle, rival);
-          }
-          this.pickup_active = this.pickup;
+          this.removeBrick(this.level.bricks[i]);
         }
       }
     }
@@ -248,10 +220,7 @@ function Player (id, lifes, container) {
             }
           }
           if (remove_brick) {
-            this.level.amount_bricks--;
-            if (this.level.bricks[j].pickup != null) {
-              this.addPickUp(this.level.bricks[j].pickup);
-            }
+            this.removeBrick(this.level.bricks[j]);
           }
         }
       }
@@ -260,7 +229,7 @@ function Player (id, lifes, container) {
 
   this.update = function(rival) {
     for(i = 0; i < this.balls.length; i++) {
-     this.balls[i].update(this.paddle, this.viewbox);
+      this.balls[i].update(this.paddle, this.viewbox);
     }
     this.paddle.update(this.id, this.container, this.viewbox);
     if (this.pickup != null){
